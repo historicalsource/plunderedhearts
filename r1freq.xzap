@@ -1,0 +1,200 @@
+	.FSTR FSTR?1,"the "	;1994	998
+	.FSTR FSTR?2,", "	;1167	1168
+	.FSTR FSTR?3,"You "	;942	315
+	.FSTR FSTR?4,"you "	;720	361
+	.FSTR FSTR?5,"your "	;714	239
+	.FSTR FSTR?6,"and "	;702	352
+	.FSTR FSTR?7,". "	;624	625
+	.FSTR FSTR?8,"The "	;477	160
+	.FSTR FSTR?9,"to "	;476	477
+	.FSTR FSTR?10,"of "	;379	380
+	.FSTR FSTR?11,"into "	;360	121
+	.FSTR FSTR?12,"from "	;348	117
+	.FSTR FSTR?13,"Lafond "	;348	59
+	.FSTR FSTR?14,"with "	;306	103
+	.FSTR FSTR?15,"is "	;299	300
+	.FSTR FSTR?16,"his "	;286	144
+	.FSTR FSTR?17,"that "	;255	86
+	.FSTR FSTR?18,"He "	;234	118
+	.FSTR FSTR?19,"Nicholas "	;232	30
+	.FSTR FSTR?20,"in "	;220	221
+	.FSTR FSTR?21,"have "	;210	71
+	.FSTR FSTR?22,"are "	;202	102
+	.FSTR FSTR?23,"Jamison "	;196	29
+	.FSTR FSTR?24,"through "	;186	32
+	.FSTR FSTR?25,"around "	;175	36
+	.FSTR FSTR?26,"not "	;168	85
+	.FSTR FSTR?27,"this "	;162	55
+	.FSTR FSTR?28,"Your "	;156	40
+	.FSTR FSTR?29,"against "	;150	26
+	.FSTR FSTR?30,"down "	;147	50
+	.FSTR FSTR?31,"It "	;146	74
+	.FSTR FSTR?32,"Lafond's "	;144	17
+	.FSTR FSTR?33,"you"	;139	140
+	.FSTR FSTR?34,"out "	;138	70
+	.FSTR FSTR?35,"over "	;129	44
+	.FSTR FSTR?36,"I "	;128	129
+	.FSTR FSTR?37,"for "	;118	60
+	.FSTR FSTR?38,"but "	;116	59
+	.FSTR FSTR?39,"on "	;111	112
+	.FSTR FSTR?40,"already "	;108	19
+	.FSTR FSTR?41,"A "	;106	107
+	.FSTR FSTR?42,"haven't "	;105	16
+	.FSTR FSTR?43,"would "	;104	27
+	.FSTR FSTR?44,"can't "	;100	21
+	.FSTR FSTR?45,"Jamison's "	;100	11
+	.FSTR FSTR?46,"This "	;96	25
+	.FSTR FSTR?47,"isn't "	;95	20
+	.FSTR FSTR?48,"It's "	;95	20
+	.FSTR FSTR?49,"back "	;93	32
+	.FSTR FSTR?50,"That "	;92	24
+	.FSTR FSTR?51,"doesn't "	;91	14
+	.FSTR FSTR?52,"one "	;88	45
+	.FSTR FSTR?53,"looks "	;88	23
+	.FSTR FSTR?54,"at "	;87	88
+	.FSTR FSTR?55,"will "	;87	30
+	.FSTR FSTR?56,"There "	;85	18
+	.FSTR FSTR?57,"ballroom"	;84	15
+	.FSTR FSTR?58,"You're "	;84	13
+	.FSTR FSTR?59,"too "	;82	42
+	.FSTR FSTR?60,"There's "	;80	11
+	.FSTR FSTR?61,"Jamison"	;78	14
+	.FSTR FSTR?62,"like "	;75	26
+	.FSTR FSTR?63,"father "	;75	16
+	.FSTR FSTR?64,"don't "	;75	16
+	.FSTR FSTR?65,"other "	;72	19
+	.FSTR FSTR?66,"about "	;72	19
+	.FSTR FSTR?67,"it "	;70	71
+	.FSTR FSTR?68,"here"	;70	36
+	.FSTR FSTR?69,"Lafond"	;70	15
+	.FSTR FSTR?70,"only "	;69	24
+	.FSTR FSTR?71,"been "	;69	24
+	.FSTR FSTR?72,"has "	;68	35
+	.FSTR FSTR?73,"he "	;66	67
+	.FSTR FSTR?74,"as "	;66	67
+	.FSTR FSTR?75,"Don't "	;66	12
+	.FSTR FSTR?76,"Cookie "	;66	12
+	.FSTR FSTR?77,"enough "	;65	14
+	.FSTR FSTR?78,"across "	;65	14
+	.FSTR FSTR?79,"seems "	;64	17
+	.FSTR FSTR?80,"north "	;64	17
+	.FSTR FSTR?81,"They "	;64	17
+	.FSTR FSTR?82,"I'm "	;64	17
+	.FSTR FSTR?83,"floor"	;63	22
+	.FSTR FSTR?84,"eyes "	;63	22
+	.FSTR FSTR?85,"get "	;60	31
+	.FSTR FSTR?86,"just "	;60	21
+	.FSTR FSTR?87,"after "	;60	16
+	.FSTR FSTR?88,"With "	;60	16
+	.FSTR FSTR?89,"stands "	;60	13
+	.FSTR FSTR?90,"looking "	;60	11
+	.FSTR FSTR?91,"be "	;58	59
+	.FSTR FSTR?92,"see "	;58	30
+	.FSTR FSTR?93,"by "	;56	57
+	.FSTR FSTR?94,"can "	;56	29
+	.FSTR FSTR?95,"something "	;56	8
+	.FSTR FSTR?96,"no "	;55	56
+
+
+;word frequency table of 96 most common words
+
+WORDS::	.TABLE
+	FSTR?1
+	FSTR?2
+	FSTR?3
+	FSTR?4
+	FSTR?5
+	FSTR?6
+	FSTR?7
+	FSTR?8
+	FSTR?9
+	FSTR?10
+	FSTR?11
+	FSTR?12
+	FSTR?13
+	FSTR?14
+	FSTR?15
+	FSTR?16
+	FSTR?17
+	FSTR?18
+	FSTR?19
+	FSTR?20
+	FSTR?21
+	FSTR?22
+	FSTR?23
+	FSTR?24
+	FSTR?25
+	FSTR?26
+	FSTR?27
+	FSTR?28
+	FSTR?29
+	FSTR?30
+	FSTR?31
+	FSTR?32
+	FSTR?33
+	FSTR?34
+	FSTR?35
+	FSTR?36
+	FSTR?37
+	FSTR?38
+	FSTR?39
+	FSTR?40
+	FSTR?41
+	FSTR?42
+	FSTR?43
+	FSTR?44
+	FSTR?45
+	FSTR?46
+	FSTR?47
+	FSTR?48
+	FSTR?49
+	FSTR?50
+	FSTR?51
+	FSTR?52
+	FSTR?53
+	FSTR?54
+	FSTR?55
+	FSTR?56
+	FSTR?57
+	FSTR?58
+	FSTR?59
+	FSTR?60
+	FSTR?61
+	FSTR?62
+	FSTR?63
+	FSTR?64
+	FSTR?65
+	FSTR?66
+	FSTR?67
+	FSTR?68
+	FSTR?69
+	FSTR?70
+	FSTR?71
+	FSTR?72
+	FSTR?73
+	FSTR?74
+	FSTR?75
+	FSTR?76
+	FSTR?77
+	FSTR?78
+	FSTR?79
+	FSTR?80
+	FSTR?81
+	FSTR?82
+	FSTR?83
+	FSTR?84
+	FSTR?85
+	FSTR?86
+	FSTR?87
+	FSTR?88
+	FSTR?89
+	FSTR?90
+	FSTR?91
+	FSTR?92
+	FSTR?93
+	FSTR?94
+	FSTR?95
+	FSTR?96
+	.ENDT
+
+	.ENDI

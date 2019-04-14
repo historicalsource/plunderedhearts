@@ -1,0 +1,29 @@
+Assembling R1.ZAP.35 on Thursday, July 30, 1987 13:58:39
+Release: 26
+
+    64	Inserting R1FREQ.XZAP.3	   (610 bytes)
+   674	Inserting R1DAT.ZAP.28	 (19294 bytes)
+ 19968	Inserting R1PUR.ZAP.27	     (0 bytes)
+ 19968	Inserting MISC.ZAP.31	  (2702 bytes)
+ 22670	Inserting PARSER.ZAP.30	  (7624 bytes)
+ 30294	Inserting VERBS.ZAP.31	 (14399 bytes)
+ 44693	Inserting GLOBALS.ZAP.32	  (9580 bytes)
+ 54273	Inserting SHIP.ZAP.31	 (15519 bytes)
+ 69792	Inserting HERO.ZAP.30	  (7252 bytes)
+ 77044	Inserting ISLAND.ZAP.30	 (17758 bytes)
+ 94802	Inserting CLOTHES.ZAP.29	  (4745 bytes)
+ 99547	Inserting EXTRAS.ZAP.28	 (18641 bytes)
+118188	Inserting R1STR.ZAP.27	 (10774 bytes)
+
+Symbols unused:
+SORE
+
+223 objects.
+239 globals.
+816 word vocabulary.
+
+128962 bytes (126K).
+ 19968 bytes of preload.
+  9715 bytes of impure.
+
+Outputting symbol tables

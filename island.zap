@@ -1,0 +1,2503 @@
+
+
+	.FUNCT	ISLAND-F
+	EQUAL?	PRSA,V?EXAMINE \FALSE
+	EQUAL?	HERE,LIBRARY \?CCL6
+	CALL	PERFORM,V?EXAMINE,GLOBE
+	RSTACK	
+?CCL6:	CALL	INNER-DECK,HERE
+	ZERO?	STACK /?CCL8
+	PRINT	YOU-CANT
+	PRINTI	"see it from here"
+	PRINT	PCR
+	RTRUE	
+?CCL8:	CALL	SHIP-BOARD,HERE
+	ZERO?	STACK \?CTR9
+	EQUAL?	HERE,SHALLOWS,LAGOON,BY-SHIP /?CTR9
+	EQUAL?	HERE,ON-LADDER \?CCL10
+?CTR9:	PRINTI	"St. Sinistra is blessed with lush tropical beauty, jungle besieging the mansion atop the southern cliffs"
+	PRINT	PCR
+	RTRUE	
+?CCL10:	CALL	PERFORM,V?LOOK
+	RTRUE	
+
+
+	.FUNCT	BELOW-GROUND,RM
+	EQUAL?	RM,STAIRWELL,BOTTOM-STAIRS /TRUE
+	EQUAL?	RM,ANTEROOM,DUNGEON /TRUE
+	EQUAL?	RM,PASSAGE-1,PASSAGE-2,PASSAGE-4 /TRUE
+	EQUAL?	RM,CELL-1,CELL-2,CELL-4 /TRUE
+	RFALSE	
+
+
+	.FUNCT	BEACH-F,RARG
+	EQUAL?	RARG,M-LOOK \?CCL3
+	PRINTI	"This is a tiny beach, at the base of vine-covered cliffs. To the east,"
+	FSET?	SHIP,MUNGBIT \?CCL6
+	PRINTI	" across the debris-ridden lagoon, black reefs speckle the blue endless sea"
+	JUMP	?CND4
+?CCL6:	CALL	TPRINT,SHIP
+	PRINTI	" floats serenely on the lagoon"
+?CND4:	ZERO?	ENDGAME /?CND7
+	PRINTI	". Halfway out to the ship is a skiff crowded with men; another skiff sits on the sand"
+?CND7:	PRINT	PCR
+	PRINT	INDENT
+	PRINTI	"Immediately north of you, a rocky staircase is hewn into the cliff. "
+	CALL	RUNNING?,I-ENDGAME
+	ZERO?	STACK /TRUE
+	PRINTI	"A sizable number of dragoons huddle at the top."
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-END \?CCL13
+	ZERO?	ENDGAME /?CCL13
+	FSET?	STONE,TOUCHBIT /?CCL13
+	CALL	QUEUED?,I-ENDGAME
+	ZERO?	STACK /?CCL13
+	MOVE	STONE,BEACH
+	FSET	STONE,TOUCHBIT
+	PRINT	INDENT
+	PRINTI	"You splash into the rising surf and pain needles up your leg. Blood swirls out from your shoe in the shallow water, flowing over a small pointed stone"
+	PRINT	PCR
+	RTRUE	
+?CCL13:	EQUAL?	RARG,M-BEG \?CCL19
+	EQUAL?	PRSA,V?ENTER \?CCL19
+	EQUAL?	PRSO,SHALLOWS \?CCL19
+	CALL	DO-WALK,P?EAST
+	RTRUE	
+?CCL19:	EQUAL?	RARG,M-ENTER \FALSE
+	IN?	COOKIE,LAWN \FALSE
+	PRINTR	"""I know 'e ain't down there!"" Cookie cries."
+
+
+	.FUNCT	BEACH-EXIT
+	CALL	RUNNING?,I-ENDGAME
+	ZERO?	STACK /?CCL3
+	PRINTI	"You would be safer aboard"
+	CALL	TRPRINT,SHIP
+	RFALSE	
+?CCL3:	RETURN	LAWN
+
+
+	.FUNCT	P-SKIFF-F
+	EQUAL?	HERE,BEACH \?CCL3
+	CALL	CTPRINT,SKIFF
+	PRINTI	" is out of reach. Wade into the shallows"
+	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	HERE,ON-LADDER \FALSE
+	ZERO?	SKIFF-TIED \?CCL8
+	PRINT	YOU-CANT-SEE-ANY
+	PRINTD	SKIFF
+	PRINTI	" here."
+	CRLF	
+	RETURN	8
+?CCL8:	EQUAL?	PRSA,V?BOARD,V?ENTER \FALSE
+	CALL	DO-WALK,P?DOWN
+	RSTACK	
+
+
+	.FUNCT	LAWN-F,RARG
+	EQUAL?	RARG,M-LOOK \?CCL3
+	PRINTI	"Jungle looms around this clipped lawn, a path meandering westward into the dense undergrowth. To the east is a folly entangled in blooming jasmine. The way to the beach is obscure, but visible to the southeast. Behind the folly a thorny hedge blocks the cliff view of the sea."
+	ZERO?	ENDGAME \TRUE
+	CRLF	
+	PRINT	INDENT
+	PRINTI	"Music and voices float from the veranda to the north."
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-END \FALSE
+	FSET?	HERE,ACTORBIT /?CCL11
+	FSET	HERE,ACTORBIT
+	PRINT	INDENT
+	PRINTR	"Two men stand whispering in the shadows. You catch an occasional word, ""Davis dead... girl... Falcon on Sinistra."" The men separate, the well-dressed one going into the ballroom as the other slinks into the bushes. You see his face. Crulley!"
+?CCL11:	ZERO?	COOKIE-LOOKING /TRUE
+	CALL	I-COOKIE,TRUE-VALUE
+	RSTACK	
+
+
+	.FUNCT	GEN-FLOWER
+	EQUAL?	HERE,FOLLY \FALSE
+	RETURN	FLOWER
+
+
+	.FUNCT	FLOWER-F
+	EQUAL?	PRSA,V?PICK,V?TAKE \?CCL3
+	FSET?	FLOWER,TAKEBIT /?CCL3
+	PRINTI	"You can't bear to pick"
+	CALL	TRPRINT,FLOWER
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?SMELL \FALSE
+	PRINTI	"Ah, jasmine! Mama grew this in her garden"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	FOLLY-F,RARG
+	EQUAL?	RARG,M-ENTER \FALSE
+	FSET?	FOLLY,TOUCHBIT /FALSE
+	FSET?	LAFS-ROOM,TOUCHBIT /FALSE
+	IN?	DAD,CELL-4 \FALSE
+	SET	'HERO-CTR,1
+	CALL	QUEUE,I-HFOLLY,2
+	RSTACK	
+
+
+	.FUNCT	FOLLY-OBJ-F
+	EQUAL?	PRSA,V?ENTER \?CCL3
+	EQUAL?	HERE,IN-HEDGE \?CCL6
+	CALL	DO-WALK,P?WEST
+	RSTACK	
+?CCL6:	EQUAL?	HERE,LAWN \?CCL8
+	CALL	DO-WALK,P?EAST
+	RSTACK	
+?CCL8:	PRINT	LOOK-AROUND
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?EXAMINE \FALSE
+	EQUAL?	HERE,IN-HEDGE \?CCL13
+	CALL	CTPRINT,FOLLY-OBJECT
+	PRINTI	" is invisible beyond the leaves to the west"
+	PRINT	PCR
+	RTRUE	
+?CCL13:	EQUAL?	HERE,FOLLY \?CCL15
+	CALL	V-LOOK
+	RTRUE	
+?CCL15:	CALL	CTPRINT,FOLLY-OBJECT
+	PRINTI	" is obscured by tangled vines"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	SLAT-F
+	EQUAL?	PRSA,V?TAKE \?CCL3
+	ZERO?	SLAT-OPEN \?CCL3
+	PRINTI	"Only the bottom of the slat is loose. The rest is tightly woven into the frame of the folly"
+	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?REMOVE,V?UNTIE \?CCL7
+	CALL	IMPOSSIBLES
+	RSTACK	
+?CCL7:	EQUAL?	PRSA,V?PUSH,V?FIDDLE,V?MOVE \?CCL9
+	ZERO?	SLAT-OPEN /?CCL12
+	PRINT	YOU-HAVE-ALREADY
+	PRINTR	" done that."
+?CCL12:	SET	'SLAT-OPEN,TRUE-VALUE
+	FCLEAR	HOLE,INVISIBLE
+	FSET	SLAT,NDESCBIT
+	PRINTI	"You twist aside the "
+	PRINTD	SLAT
+	PRINTI	", wedging the end into the woven wall. The remaining hole, just above the bench, looks big enough to snake "
+	PRINTD	ME
+	PRINTI	" through"
+	PRINT	PCR
+	RTRUE	
+?CCL9:	EQUAL?	PRSA,V?EXAMINE \FALSE
+	PRINTI	"The bamboo slat at the back of the folly "
+	FSET?	SLAT,NDESCBIT \?CCL17
+	PRINTI	"has been pulled aside, making a hole in the wall"
+	PRINT	PCR
+	RTRUE	
+?CCL17:	PRINTI	"appears to be loose"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	HOLE-F
+	EQUAL?	PRSA,V?ENTER \?CCL3
+	CALL	DO-WALK,P?EAST
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?PUT,V?PUT-THROUGH,V?THROW \?CCL5
+	EQUAL?	PRSO,HANDS \?CCL8
+	PRINT	HUH
+	RTRUE	
+?CCL8:	EQUAL?	PRSO,RETICULE /FALSE
+	CALL	PRONOUN
+	PRINTI	" fall"
+	FSET?	PRSO,PLURALBIT /?CND11
+	PRINTC	115
+?CND11:	PRINTI	" through the hole"
+	MOVE	PRSO,IN-HEDGE
+	PRINT	PCR
+	RTRUE	
+?CCL5:	EQUAL?	PRSA,V?LOOK-INSIDE \FALSE
+	PRINT	YOU-SEE
+	PRINTI	" a few leaves near to you, more fading into green obscurity"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	FOLLY-EXIT
+	ZERO?	SLAT-OPEN /?CCL3
+	FSET?	GOWN,WORNBIT /?CTR5
+	RETURN	IN-HEDGE
+?CTR5:	PRINTI	"You might rip"
+	CALL	TRPRINT,GOWN
+	RFALSE	
+?CCL3:	PRINT	CANT-GO
+	RETURN	FALSE
+
+
+	.FUNCT	BY-HOUSE-F,RARG
+	EQUAL?	RARG,M-LOOK \FALSE
+	PRINTI	"You crouch in"
+	CALL	TPRINT,HEDGE
+	PRINTI	" by the house, twigs poking into you, the cliff crumbling away to the east. "
+	CALL	CTPRINT,HEDGE
+	PRINTI	" seems less dense to the south. A"
+	CALL	TELL-OPEN/CLOSED,LIB-WINDOW,TRUE-VALUE
+	PRINTI	" window is directly west of you."
+	RTRUE	
+
+
+	.FUNCT	VERANDA-F,RARG
+	EQUAL?	RARG,M-LOOK \?CCL3
+	PRINTI	"Steps lead south from this white marble veranda to a clipped lawn. To the north"
+	CALL	QUEUED?,I-ENDGAME
+	ZERO?	STACK /?CCL6
+	PRINTI	" the wreckage left by the duel is visible in the ballroom."
+	RTRUE	
+?CCL6:	FSET?	VER-DOOR,OPENBIT /?CND4
+	PRINTI	", beyond a closed glass door,"
+?CND4:	ZERO?	ENDGAME /?CCL10
+	PRINTI	" is"
+	JUMP	?CND8
+?CCL10:	PRINTI	" a line of people blocks your view of"
+?CND8:	PRINTI	" the ballroom."
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-END \FALSE
+	ZERO?	COOKIE-LOOKING /FALSE
+	CALL	I-COOKIE,TRUE-VALUE
+	RSTACK	
+
+
+	.FUNCT	AROUND-HOUSE
+	PRINTI	"The gravel path is just wide enough for a cart to pass. It bends around the west wing of the house, leading you to"
+	PRINT	ELLIPSIS
+	EQUAL?	HERE,MAIN-ENTRANCE /?CTR2
+	RETURN	MAIN-ENTRANCE
+?CTR2:	RETURN	TRADE-ENTRANCE
+
+
+	.FUNCT	FOREST-F,RARG
+	EQUAL?	RARG,M-END \FALSE
+	FSET?	FOREST,EVERYBIT \FALSE
+	CALL	DEQUEUE,I-CATCH-KISS
+	FCLEAR	FOREST,EVERYBIT
+	PRINT	INDENT
+	PRINTI	"Two whispered voices come from the path ahead, one reassuring, the other desperate -- they sound like"
+	CALL	TPRINT,DAD
+	PRINTR	" and Lucy. Peering over a bush, you see the couple share a fond embrace before they meander off into the jungle."
+
+
+	.FUNCT	CLEARING-F,RARG
+	EQUAL?	RARG,M-BEG \FALSE
+	EQUAL?	PRSO,WINDOW /?CCL3
+	EQUAL?	PRSI,WINDOW \FALSE
+?CCL3:	EQUAL?	PRSA,V?LOOK-INSIDE,V?EXAMINE \?CCL10
+	PRINT	YOU-SEE
+	PRINTR	" only an embossed ceiling."
+?CCL10:	EQUAL?	PRSA,V?ENTER \?CCL12
+	CALL	DO-WALK,P?UP
+	RTRUE	
+?CCL12:	CALL	CANT-REACH,WINDOW
+	RSTACK	
+
+
+	.FUNCT	VINE-F
+	EQUAL?	HERE,BEACH \?CCL3
+	EQUAL?	PRSA,V?EXAMINE /?CCL3
+	CALL	CANT-REACH,VINE
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?TAKE \?CCL7
+	PRINTI	"You tug, but are unable to get any substantial length of vine"
+	PRINT	PCR
+	RTRUE	
+?CCL7:	EQUAL?	PRSA,V?CLIMB \?CCL9
+	EQUAL?	HERE,CLEARING \?CCL9
+	CALL	DO-WALK,P?UP
+	RTRUE	
+?CCL9:	EQUAL?	PRSA,V?CLIMB-DOWN,V?CLIMB \FALSE
+	EQUAL?	HERE,BEDROOM \FALSE
+	CALL	DO-WALK,P?DOWN
+	RTRUE	
+
+
+	.FUNCT	KITCHEN-F,RARG
+	EQUAL?	RARG,M-END \FALSE
+	IN?	LUCY,KITCHEN \FALSE
+	ZERO?	BOY-DRESS? /?CCL8
+	FSET?	LUCY,TOUCHBIT /FALSE
+	FSET	LUCY,TOUCHBIT
+	CALL	QUEUE,I-LUCY,2
+	PRINT	INDENT
+	PRINTR	"The woman smiles uncertainly, then rushes over. ""Are you come from the village, boy? Dost know Lord Dimsford?"" She sighs at your surprise. ""So he sent you -- I am his Lucy. It's been so long since I've seen him. Lafond caught me eavesdropping and now I can't leave the grounds."""
+?CCL8:	FSET?	GOWN,WORNBIT \?CCL13
+	PRINT	INDENT
+	PRINTI	"""Milady,"" exclaims the woman. ""Lafond's guests are wisest not to stray. Maybe you should stay at the ball."" You find "
+	PRINTD	ME
+	PRINTI	" ushered into a hallway"
+	PRINT	PCR
+	CRLF	
+	CALL	GOTO,HALL-W
+	RSTACK	
+?CCL13:	PRINT	INDENT
+	PRINTI	"The woman shrieks, pushing you out the door. ""Has not the governor made clear his position on light-skirts? Out, slattern, before I report you!"" Her voice drops to a whisper, ""Sorry, but it's not safe around here. Stay in the village."" You find yourself outside"
+	PRINT	PCR
+	CRLF	
+	CALL	GOTO,TRADE-ENTRANCE
+	RSTACK	
+
+
+	.FUNCT	KITCHEN-EXIT
+	CALL	META-LOC,GARTER
+	EQUAL?	STACK,HERE \?CCL3
+	CALL	HELD?,GARTER
+	ZERO?	STACK \?CCL3
+	IN?	LUCY,HERE \?CCL3
+	IN?	DAD,HERE /?CCL3
+	REMOVE	GARTER
+	CALL	DEQUEUE,I-LUCY
+	PRINTI	"Lucy spits at you, ""Yes, desert a helpless woman. Tell Lafond I'm a spy. Dimsford will avenge me, runt!"" She comes after you with a rolling pin, pushing you out the door"
+	PRINT	PCR
+	CRLF	
+	RETURN	TRADE-ENTRANCE
+?CCL3:	IN?	LUCY,HERE \?CND8
+	IN?	DAD,HERE /?CND8
+	FSET?	GARTER,TOUCHBIT \?CND8
+	PRINTI	"""Don't forget -- tell Dimsford,"""
+	CALL	TPRINT,LUCY
+	PRINT	CALLS-AFTER
+?CND8:	EQUAL?	P-WALK-DIR,P?SOUTH /?CTR14
+	RETURN	TRADE-ENTRANCE
+?CTR14:	RETURN	HALL-W
+
+
+	.FUNCT	BALLROOM-ENTRANCE
+	EQUAL?	HERE,VERANDA \?CCL3
+	FSET?	VER-DOOR,OPENBIT /?CCL3
+	CALL	CTPRINT,DOOR
+	PRINT	IS-CLOSED
+	PRINT	PCR
+	RFALSE	
+?CCL3:	ZERO?	ENDGAME /?CCL7
+	CALL	RUNNING?,I-DUEL
+	ZERO?	STACK /?CCL10
+	PRINT	YOU-CANT
+	PRINTI	"force "
+	PRINTD	ME
+	PRINTI	" between the amazed spectators of the duel"
+	PRINT	PCR
+	RETURN	FALSE
+?CCL10:	RETURN	BALLROOM
+?CCL7:	FSET?	GOWN,WORNBIT /?CCL12
+	PRINTI	"Though you glimpse whirling bodies beyond, the spectators fail to admit such a "
+	ZERO?	BOY-DRESS? /?CCL15
+	PRINTI	"grubby youth"
+	JUMP	?CND13
+?CCL15:	PRINTI	"poorly dressed female"
+?CND13:	PRINTI	".
+"
+	RETURN	FALSE
+?CCL12:	PRINTI	"The sea of spectators parts to admit you, murmuring approval"
+	PRINT	PCR
+	CRLF	
+	RETURN	BALLROOM
+
+
+	.FUNCT	FOYER-F,RARG
+	EQUAL?	RARG,M-END \?CCL3
+	FSET?	BUTLER,DEADBIT /?CCL6
+	IN?	BUTLER,HERE \?CCL6
+	FSET?	GOWN,WORNBIT \?CCL11
+	FSET?	FOYER,EVERYBIT \?CCL14
+	FCLEAR	FOYER,EVERYBIT
+	REMOVE	BUTLER
+	PRINT	INDENT
+	PRINTI	"""Miss, the master has been expecting you, up in his room. I did look for you."" "
+	CALL	CTPRINT,BUTLER
+	PRINTR	" bows and leaves."
+?CCL14:	FSET?	BUTLER,MUNGBIT \FALSE
+	PRINT	INDENT
+	PRINTC	34
+	PRINT	NO-LOITERING
+	PRINT	PUSHING-YOU-OUT
+	CRLF	
+	CALL	GOTO,MAIN-ENTRANCE
+	RSTACK	
+?CCL11:	ZERO?	BOY-DRESS? /?CCL18
+	CALL	KICKED-OUT
+	RSTACK	
+?CCL18:	PRINT	INDENT
+	PRINTI	"""You may not ply your wares here, Paphian. Leave before I have you thrown off the cliff!"" You contemplate this pleasant prospect as you are tossed onto the gravel drive."
+	CRLF	
+	CRLF	
+	CALL	GOTO,MAIN-ENTRANCE
+	RSTACK	
+?CCL6:	ZERO?	COOKIE-LOOKING /TRUE
+	CALL	I-COOKIE,TRUE-VALUE
+	RSTACK	
+?CCL3:	EQUAL?	RARG,M-ENTER \FALSE
+	FSET?	BUTLER,DEADBIT /FALSE
+	FSET?	BUTLER,INDOORSBIT /FALSE
+	CALL	QUEUE,I-BUTLER,3
+	RSTACK	
+
+
+	.FUNCT	FOYER-EXIT
+	FSET?	BUTLER,INDOORSBIT \?CCL3
+	EQUAL?	P-WALK-DIR,P?SOUTH \?CCL6
+	CALL	BALLROOM-ENTRANCE
+	RSTACK	
+?CCL6:	EQUAL?	P-WALK-DIR,P?WEST \?CCL8
+	RETURN	HALL-W
+?CCL8:	EQUAL?	P-WALK-DIR,P?UP \?CCL10
+	RETURN	STAIRTOP
+?CCL10:	EQUAL?	P-WALK-DIR,P?EAST,P?UP \FALSE
+	IN?	BUTLER,HERE /?CTR14
+	RETURN	HALL-E
+?CTR14:	PRINTI	"""No, ma'am, that way's private."" The butler stops you"
+	PRINT	PCR
+	RFALSE	
+?CCL3:	CALL	RUNNING?,I-BUTLER
+	ZERO?	STACK /?CCL17
+	CALL	QUEUE,I-BUTLER,2
+	PRINTI	"""Excuse me!"" The "
+	PRINTD	BUTLER
+	PRINTI	" pushes you back. ""Your invitation, please!"""
+	CRLF	
+	RFALSE	
+?CCL17:	CALL	QUEUE,I-BUTLER,2
+	SET	'AWAITING-FAKE-ORPHAN,TRUE-VALUE
+	PRINTI	"The butler prevents you. ""Miss... your invitation?"""
+	CRLF	
+	RFALSE	
+
+
+	.FUNCT	BALLROOM-F,RARG=0
+	EQUAL?	RARG,M-LOOK \?CCL3
+	ZERO?	ENDGAME /?CCL6
+	CALL	QUEUED?,I-ENDGAME
+	ZERO?	STACK /?CCL9
+	CALL	CTPRINT,DANCERS
+	PRINTI	"s stare amazed at Lafond's limp body, some disbelieving, some hopeful, all stock still. The pirates have fled to the darkness of the lawn"
+	JUMP	?CND4
+?CCL9:	PRINTI	"All is chaos, screaming women fainting on terrified men. Several of Jamison's scruffiest men round the dancers into a huddle in the center of"
+	PRINT	DANCE-FLOOR
+	JUMP	?CND4
+?CCL6:	PRINTI	"Lafond's party is well attended: you can hardly move for the crush. However, the room is oddly silent, no talk interrupting the musical efforts of"
+	CALL	TPRINT,MUSICIANS
+	PRINTI	" to the west. Despite the heat, no one ventures south to the veranda, nor through the opening east. The foyer is north of you"
+?CND4:	PRINTC	46
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-ENTER \?CCL11
+	FSET?	HERE,TOUCHBIT /?CCL14
+	SET	'HERO-CTR,1
+	CALL	QUEUE,I-HDANCE,-1
+	RSTACK	
+?CCL14:	ZERO?	PARTNER \FALSE
+	EQUAL?	DANCED-WITH,HERO \FALSE
+	ZERO?	ENDGAME \FALSE
+	SET	'LAFOND-CTR,1
+	CALL	QUEUE,I-LDANCE,1
+	RFALSE	
+?CCL11:	EQUAL?	RARG,M-BEG \?CCL21
+	EQUAL?	CREW,PRSO,PRSI \?CCL24
+	CALL	NOUN-USED,W?MAN,CREW
+	ZERO?	STACK \?CCL24
+	EQUAL?	PRSA,V?ASK-ABOUT /?CCL24
+	EQUAL?	PRSO,LAFOND,HERO /?CCL24
+	FSET?	BALLROOM,EVERYBIT /?CCL24
+	PRINT	YOU-CANT-SEE-ANY
+	PRINTI	"of Jamison's crew here"
+	PRINT	PCR
+	CALL	STOP
+	RSTACK	
+?CCL24:	EQUAL?	PRSA,V?ASK-FOR \?CCL31
+	IN?	PRSO,HERE \?CCL31
+	EQUAL?	PRSI,BALLROOM \?CCL31
+	CALL	PERFORM,V?DANCE,PRSO
+	RTRUE	
+?CCL31:	EQUAL?	PRSA,V?PUT \?CCL36
+	EQUAL?	PRSI,BALLROOM \?CCL36
+	CALL	PERFORM,V?DROP,PRSO
+	RTRUE	
+?CCL36:	EQUAL?	PARTNER,HERO,LAFOND \FALSE
+	CALL	TOUCHING?,VER-DOOR
+	ZERO?	STACK /FALSE
+	PRINTD	PARTNER
+	PRINTR	" sweeps you past."
+?CCL21:	EQUAL?	RARG,M-END \FALSE
+	ZERO?	COOKIE-LOOKING /FALSE
+	CALL	I-COOKIE,TRUE-VALUE
+	RSTACK	
+
+
+	.FUNCT	BALLROOM-EXIT
+	EQUAL?	PARTNER,HERO \?CCL3
+	PRINTI	"""Would you rather not dance? "
+	EQUAL?	P-WALK-DIR,P?SOUTH \?CCL6
+	PRINTI	"Apparently the guests have orders not to go outside."" Instead"
+	CALL	TPRINT,HERO
+	PRINTI	" whirls and twirls you towards"
+	CALL	TRPRINT,MUSICIANS
+	CRLF	
+	RETURN	ORCHESTRA
+?CCL6:	EQUAL?	P-WALK-DIR,P?EAST \?CCL8
+	PRINTI	"Hungry?"" He guides you into the supper room, then tsks in dismay. ""They've cleared the food away already!"""
+	CRLF	
+	CRLF	
+	RETURN	SUPPER-ROOM
+?CCL8:	EQUAL?	P-WALK-DIR,P?WEST \?CCL10
+	PRINTI	"Let's listen to the music while we talk."" He walks you towards"
+	CALL	TRPRINT,MUSICIANS
+	CRLF	
+	RETURN	ORCHESTRA
+?CCL10:	PRINTI	"It wouldn't be wise to put ourselves into the butler's sight, though."" He escorts you into the supper-room instead"
+	PRINT	PCR
+	CRLF	
+	RETURN	SUPPER-ROOM
+?CCL3:	CALL	QUEUED?,I-CKILLS-DAD
+	ZERO?	STACK /?CCL12
+	PRINTD	LAFOND
+	PRINTI	" stops you. ""Stay until we hear the sad news."""
+	CRLF	
+	RFALSE	
+?CCL12:	EQUAL?	LAFOND,PARTNER \?CCL14
+	PRINTI	"""How dare you walk away!"" Lafond grips your arm, so you may not leave the floor"
+	PRINT	PCR
+	RFALSE	
+?CCL14:	CALL	RUNNING?,I-LDANCE
+	ZERO?	STACK /?CND1
+	LOC	LAFOND
+	EQUAL?	STACK,HERE \?CND1
+	SET	'QUESTIONER,LAFOND
+	PRINTI	"""Your answer, cherie?"" His twists your wrist mercilessly"
+	PRINT	PCR
+	RFALSE	
+?CND1:	EQUAL?	P-WALK-DIR,P?NORTH \?CCL20
+	RETURN	FOYER
+?CCL20:	EQUAL?	P-WALK-DIR,P?SOUTH \?CCL22
+	FSET?	VER-DOOR,OPENBIT \?CCL25
+	RETURN	VERANDA
+?CCL25:	CALL	CTPRINT,DOOR
+	PRINT	IS-CLOSED
+	PRINT	PCR
+	RFALSE	
+?CCL22:	EQUAL?	P-WALK-DIR,P?WEST \?CCL27
+	RETURN	ORCHESTRA
+?CCL27:	EQUAL?	P-WALK-DIR,P?EAST \FALSE
+	RETURN	SUPPER-ROOM
+
+
+	.FUNCT	MUSICIANS-F
+	EQUAL?	PRSA,V?LISTEN,V?EXAMINE \?CCL3
+	ZERO?	ENDGAME /?CCL6
+	PRINTI	"The musicians are with"
+	CALL	TPRINT,DANCERS
+	PRINTR	"s in the ballroom."
+?CCL6:	PRINTR	"The small band is made up of a virginal, bass and treble viols, and several recorders. They are playing ""I Want to Kiss Your Hand,"" by J.S. Beatle."
+?CCL3:	CALL	UNIMPORTANT-THING
+	CALL	STOP
+	RSTACK	
+
+
+	.FUNCT	ORCHESTRA-F,RARG
+	EQUAL?	RARG,M-LOOK \?CCL3
+	ZERO?	ENDGAME /?CCL6
+	CALL	QUEUED?,I-ENDGAME
+	ZERO?	STACK \?CCL6
+	PRINTI	"This end of the ballroom is empty of people."
+	RTRUE	
+?CCL6:	PRINTI	"A few older women and young girls sit near the small orchestra assembled at this end of the ballroom."
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-END \FALSE
+	ZERO?	COOKIE-LOOKING /FALSE
+	CALL	I-COOKIE,TRUE-VALUE
+	RSTACK	
+
+
+	.FUNCT	SUPPER-ROOM-F,RARG
+	EQUAL?	RARG,M-ENTER \?CCL3
+	MOVE	LONG-TABLE,HERE
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-END \FALSE
+	ZERO?	COOKIE-LOOKING /FALSE
+	CALL	I-COOKIE,TRUE-VALUE
+	RSTACK	
+
+
+	.FUNCT	UNDER-TABLE
+	PRINTI	"You scuttle underneath"
+	CALL	TRPRINT,LONG-TABLE
+	CRLF	
+	EQUAL?	HERE,HALL-E /?CTR2
+	RETURN	HALL-E
+?CTR2:	RETURN	SUPPER-ROOM
+
+
+	.FUNCT	HALL-E-F,RARG
+	EQUAL?	RARG,M-END \?CCL3
+	FSET?	BUTLER,DEADBIT /?CCL3
+	IN?	BUTLER,FOYER \?CCL3
+	FSET?	GOWN,WORNBIT /?CCL9
+	CALL	KICKED-OUT
+	RSTACK	
+?CCL9:	FSET?	BUTLER,INDOORSBIT /FALSE
+	PRINT	INDENT
+	PRINTI	"A "
+	PRINTD	BUTLER
+	PRINTI	" takes your arm, pulling you into the foyer. ""I have not seen your "
+	PRINTD	INVITE
+	PRINTI	", Miss."""
+	CRLF	
+	CRLF	
+	CALL	GOTO,FOYER
+	RSTACK	
+?CCL3:	EQUAL?	RARG,M-ENTER \FALSE
+	MOVE	LONG-TABLE,HALL-E
+	RTRUE	
+
+
+	.FUNCT	LIBRARY-F,RARG
+	EQUAL?	RARG,M-LOOK \?CCL3
+	PRINTI	"Everything in this private office is larger than life. A huge "
+	PRINTD	PORTRAIT
+	FSET?	PORTRAIT,OPENBIT \?CND4
+	PRINTI	", slightly awry from the wall,"
+?CND4:	PRINTI	" decorates the north side, and black drapes mask the east wall. Bookshelves tower over a cherry desk, and a massive wooden globe squats in a corner."
+	ZERO?	ENDGAME \?CND6
+	PRINTI	" Music wafts distantly from the ballroom across the hall to the south."
+?CND6:	FSET?	KNOB,DEADBIT /TRUE
+	CRLF	
+	PRINT	INDENT
+	PRINTI	"A knob juts out of the wall."
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-ENTER \?CCL12
+	IN?	COOKIE,HERE \?CCL12
+	FSET?	COOKIE,EVERYBIT /?CCL12
+	FSET	COOKIE,EVERYBIT
+	PRINT	SURPRISE
+	PRINTD	COOKIE
+	PRINTI	" is here, studying the walls. ""Cap'n said somethin' about a secret door, mebbe."""
+	CRLF	
+	CRLF	
+	RTRUE	
+?CCL12:	EQUAL?	RARG,M-END \FALSE
+	IN?	DAD,HERE \?CCL20
+	EQUAL?	DANCED-WITH,LAFOND \?CND21
+	ZERO?	HERO-ARRESTED \?CND21
+	CALL	QUEUE,I-HARRESTED,2
+?CND21:	CALL	QUEUE,I-CATCH-KISS,25
+	FSET	FOREST,EVERYBIT
+	FSET	LIB-WINDOW,OPENBIT
+	SET	'SLAT-OPEN,TRUE-VALUE
+	FCLEAR	HOLE,INVISIBLE
+	FSET	SLAT,NDESCBIT
+	REMOVE	DAD
+	REMOVE	LUCY
+	PRINT	INDENT
+	PRINTI	"""A "
+	PRINTD	WINDOW
+	PRINTI	"!"" your father exclaims. ""I shall creep out to the kitchen. Get the Falcon."" He climbs out"
+	CALL	TRPRINT,WINDOW
+	RSTACK	
+?CCL20:	IN?	COOKIE,HERE \FALSE
+	CALL	RUNNING?,I-DUEL
+	ZERO?	STACK /FALSE
+	MOVE	COOKIE,GALLERY
+	REMOVE	CREW
+	PRINT	INDENT
+	PRINTD	COOKIE
+	PRINTI	" cocks his head. ""What is that noise? Is Cap'n duelling Lafond? There's no chance he could win as beaten as he is!"" Cookie races out towards the ballroom"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	PORTRAIT-EXIT
+	FSET?	PORTRAIT,MUNGBIT /?CCL3
+	PRINT	CANT-GO
+	RFALSE	
+?CCL3:	FSET?	PORTRAIT,OPENBIT /?CCL5
+	CALL	CTPRINT,PORTRAIT
+	PRINT	IS-CLOSED
+	PRINT	PCR
+	RFALSE	
+?CCL5:	CALL	HELD?,HAT
+	ZERO?	STACK /?CND6
+	CALL	SAFETY-SAKE
+	PRINT	INDENT
+?CND6:	PRINTI	"You move beyond"
+	CALL	TPRINT,PORTRAIT
+	PRINTI	" into the "
+	EQUAL?	HERE,STAIRWELL \?CCL10
+	PRINTI	"library"
+	PRINT	PCR
+	CRLF	
+	RETURN	LIBRARY
+?CCL10:	EQUAL?	HERE,LIBRARY \FALSE
+	PRINTI	"flickering torchlight"
+	PRINT	PCR
+	CRLF	
+	RETURN	STAIRWELL
+
+
+	.FUNCT	DRAPES-F
+	EQUAL?	PRSA,V?LOOK-BEHIND \?CCL3
+	EQUAL?	HERE,LAFS-ROOM \?CCL6
+	PRINT	THERES-NOTHING
+	PRINTI	"interesting behind"
+	CALL	TRPRINT,DRAPES
+	RSTACK	
+?CCL6:	PRINTI	"In the dark behind"
+	CALL	TPRINT,DRAPES
+	PRINTI	" is"
+	CALL	ARPRINT,WINDOW
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?MOVE,V?PUSH,V?OPEN \?CCL8
+	PRINT	PULL-FABRIC
+	CRLF	
+	RTRUE	
+?CCL8:	EQUAL?	PRSA,V?CLOSE \?CCL10
+	EQUAL?	HERE,LIBRARY \?CCL13
+	PRINT	ALREADY-ARE
+	RTRUE	
+?CCL13:	PRINT	BEAUTIFUL-NIGHT
+	RTRUE	
+?CCL10:	EQUAL?	PRSA,V?EXAMINE \FALSE
+	EQUAL?	HERE,LIBRARY \?CCL18
+	PRINTI	"Dark drapes cover an entire wall of the room"
+	PRINT	PCR
+	RTRUE	
+?CCL18:	PRINTI	"The purple hangings are densely embroidered with gold"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	TORCH-F
+	EQUAL?	PRSA,V?EXAMINE \?CCL3
+	CALL	CTPRINT,TORCH
+	PRINTR	" is flickering madly in the breeze."
+?CCL3:	EQUAL?	PRSA,V?PUT-ON,V?PUT \?CCL5
+	FSET?	PRSI,BURNBIT \?CCL5
+	PRINTR	"Mama disapproved of pyromaniacs."
+?CCL5:	CALL	TOUCHING?,TORCH
+	ZERO?	STACK /FALSE
+	PRINT	YOU-CANT
+	PRINTI	"reach"
+	CALL	TPRINT,TORCH
+	PRINTR	". Ladies don't carry them anyway."
+
+
+	.FUNCT	PORTRAIT-F
+	EQUAL?	PRSA,V?EXAMINE \?CCL3
+	EQUAL?	HERE,LIBRARY \?CCL6
+	FSET?	PORTRAIT,OPENBIT \?CCL9
+	PRINTI	"Cool air seeps out from"
+	CALL	TRPRINT,PORTRAIT
+	RSTACK	
+?CCL9:	CALL	CTPRINT,PORTRAIT
+	PRINTI	" seems familiar, and you realize it is exactly the picture on the front of"
+	CALL	TPRINT,BANKNOTE
+	CALL	TPRINT,LAFOND
+	PRINTR	" sent you, same clothes, same surroundings, same pose."
+?CCL6:	PRINT	YOU-SEE
+	PRINT	THE-BACK
+	CALL	TRPRINT,PORTRAIT
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?LOOK-BEHIND \?CCL11
+	FSET?	PORTRAIT,OPENBIT \?CCL14
+	CALL	PERFORM,V?EXAMINE,PORTRAIT
+	RTRUE	
+?CCL14:	CALL	CTPRINT,PORTRAIT
+	PRINTI	" is firmly fastened to the wall"
+	PRINT	PCR
+	RTRUE	
+?CCL11:	EQUAL?	PRSA,V?WALK,V?HIDE,V?ENTER \?CCL16
+	FSET?	PORTRAIT,MUNGBIT /?CCL19
+	PRINTI	"This is a "
+	PRINTD	PORTRAIT
+	PRINTI	", not a looking glass"
+	PRINT	PCR
+	RTRUE	
+?CCL19:	CALL	DO-WALK,P?IN
+	RSTACK	
+?CCL16:	EQUAL?	PRSA,V?OPEN \?CCL21
+	FSET?	PORTRAIT,OPENBIT \?CCL24
+	PRINT	ALREADY-IS
+	RTRUE	
+?CCL24:	FSET?	PORTRAIT,MUNGBIT \?CCL26
+	FSET	PORTRAIT,OPENBIT
+	EQUAL?	HERE,LIBRARY \?CCL29
+	PRINTI	"Quickly you pull the book, joggle"
+	CALL	TPRINT,KNOB
+	PRINTI	" and touch"
+	CALL	TPRINT,GLOBE
+	PRINTI	", and"
+	CALL	TPRINT,PORTRAIT
+	PRINTI	" pops open."
+	IN?	COOKIE,HERE \?CND30
+	PRINT	COOKIE-HARRUMPHS
+?CND30:	CRLF	
+	RTRUE	
+?CCL29:	PRINTI	"You push outwards on the wall, opening"
+	CALL	TRPRINT,PORTRAIT
+	RSTACK	
+?CCL26:	PRINTI	"Open a "
+	PRINTD	PORTRAIT
+	PRINTR	"?!"
+?CCL21:	EQUAL?	PRSA,V?CLOSE \FALSE
+	FSET?	PORTRAIT,MUNGBIT /?CCL36
+	PRINT	HUH
+	RTRUE	
+?CCL36:	FSET?	PORTRAIT,OPENBIT \FALSE
+	FCLEAR	PORTRAIT,OPENBIT
+	FCLEAR	POWER,EVERYBIT
+	FCLEAR	KNOB,EVERYBIT
+	CALL	CTPRINT,PORTRAIT
+	PRINTR	" swings shut with a tiny snap."
+
+
+	.FUNCT	GLOBE-F
+	EQUAL?	PRSA,V?PUSH,V?TOUCH /?CTR2
+	EQUAL?	PRSA,V?PUT-ON \?CCL3
+	EQUAL?	PRSO,HANDS \?CCL3
+?CTR2:	PRINTI	"You press the "
+	CALL	NOUN-USED,W?SINISTRA,GLOBE
+	ZERO?	STACK \?CTR9
+	CALL	NOUN-USED,W?ISLAND,GLOBE
+	ZERO?	STACK \?CTR9
+	CALL	ADJ-USED,A?ST
+	ZERO?	STACK /?CCL10
+?CTR9:	PRINTI	"painted island, and it sinks into the wooden sea."
+	FSET?	KNOB,EVERYBIT \?CND8
+	FSET?	POWER,EVERYBIT \?CND8
+	FSET?	PORTRAIT,OPENBIT /?CND8
+	FSET	PORTRAIT,OPENBIT
+	FSET?	PORTRAIT,MUNGBIT /?CND19
+	FSET	PORTRAIT,MUNGBIT
+	INC	'SCORE
+?CND19:	PRINTI	" You hear a whirr and a click and"
+	CALL	TPRINT,PORTRAIT
+	PRINTI	" pops open. A draft of sea-scented air flows in from behind it."
+	IN?	COOKIE,HERE \?CND8
+	PRINT	COOKIE-HARRUMPHS
+?CND8:	CRLF	
+	RTRUE	
+?CCL10:	PRINTR	"globe at random."
+?CCL3:	EQUAL?	PRSA,V?SET,V?TAKE \?CCL24
+	CALL	CTPRINT,GLOBE
+	PRINTR	" is solidly fastened to the floor."
+?CCL24:	EQUAL?	PRSA,V?FIND \?CCL26
+	EQUAL?	PRSI,GLOBE \?CCL26
+	CALL	NOUN-USED,W?SINISTRA,GLOBE
+	ZERO?	STACK \?CTR25
+	CALL	NOUN-USED,W?ISLAND,GLOBE
+	ZERO?	STACK \?CTR25
+	CALL	ADJ-USED,A?ST
+	ZERO?	STACK /?CCL26
+?CTR25:	PRINTR	"It is in the West Indies, surrounded by blue."
+?CCL26:	EQUAL?	PRSA,V?EXAMINE \FALSE
+	CALL	NOUN-USED,W?SINISTRA,GLOBE
+	ZERO?	STACK \?CTR36
+	CALL	NOUN-USED,W?ISLAND,GLOBE
+	ZERO?	STACK \?CTR36
+	CALL	ADJ-USED,A?ST
+	ZERO?	STACK /?CCL37
+?CTR36:	PRINTI	"A tiny replica of "
+	PRINTD	ISLAND
+	PRINTI	" is painted on"
+	CALL	TPRINT,GLOBE
+	PRINTI	" in greater detail than any other country, showing even the road from Santa Ananas to Lafond's mansion"
+	PRINT	PCR
+	RTRUE	
+?CCL37:	PRINTI	"The massive wooden globe, painted in greens and blues and white, describes the world as presently known"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	BOOKS-GLOBAL-F
+	EQUAL?	PRSA,V?TAKE,V?READ,V?LOOK-INSIDE /?CTR2
+	EQUAL?	PRSA,V?OPEN \?CCL3
+?CTR2:	PRINTI	"You pick one at random. You always preferred horses to reading, so you put it back"
+	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?SEARCH,V?EXAMINE \?CCL7
+	PRINTI	"Most of the books appear unread, their pages uncut, the spines not yet creased. All except one, ""Treatise of Power"" by Sir Michael Villiers"
+	PRINT	PCR
+	RTRUE	
+?CCL7:	EQUAL?	PRSA,V?PUSH,V?MOVE \FALSE
+	PRINT	HUH
+	RTRUE	
+
+
+	.FUNCT	BOOKCASE-F
+	EQUAL?	PRSA,V?SEARCH,V?LOOK-INSIDE,V?EXAMINE \?CCL3
+	CALL	PERFORM,V?EXAMINE,BOOKS-GLOBAL
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?SET,V?PUSH,V?MOVE \?CCL5
+	SET	'AWAITING-REPLY,3
+	CALL	QUEUE,I-REPLY,2
+	PRINTI	"Why tamper with a "
+	PRINTD	BOOKCASE
+	PRINTR	"? Searching for a secret door or some such?"
+?CCL5:	EQUAL?	PRSA,V?CLOSE,V?OPEN \FALSE
+	CALL	WASTES
+	RSTACK	
+
+
+	.FUNCT	POWER-F
+	EQUAL?	PRSA,V?OPEN,V?TAKE,V?READ /?CTR2
+	EQUAL?	PRSA,V?FIDDLE,V?MOVE \?CCL3
+?CTR2:	PRINTI	"You half tip"
+	CALL	TPRINT,POWER
+	PRINTI	" out of the shelf when it snaps surprisingly back into place"
+	FSET?	POWER,MUNGBIT /?CND6
+	FSET	POWER,MUNGBIT
+	INC	'SCORE
+?CND6:	FSET?	POWER,EVERYBIT /?CND8
+	FSET	POWER,EVERYBIT
+	PRINTI	". There is a mysterious scraping sound from inside the wall"
+?CND8:	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?EXAMINE \FALSE
+	PRINTR	"You gaze at ""Treatise of Power"" without taking it. It seems to be the only book that has been read in the library, the leather creased and dull with use."
+
+
+	.FUNCT	GENERIC-BOOK,X,Y
+	EQUAL?	HERE,LIBRARY \FALSE
+	RETURN	BOOKS-GLOBAL
+
+
+	.FUNCT	KNOB-F
+	EQUAL?	PRSA,V?SET,V?MOVE,V?PUSH /?CTR2
+	EQUAL?	PRSA,V?FIDDLE,V?LOWER \?CCL3
+?CTR2:	FSET?	KNOB,EVERYBIT \?CCL8
+	CALL	HACK-HACK,STR?261
+	RSTACK	
+?CCL8:	FSET	KNOB,EVERYBIT
+	CALL	KNOB-CAUSES-TINGLE,STR?317
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?PUT,V?PUT-ON \?CCL10
+	EQUAL?	PRSO,HAT \?CCL10
+	FSET?	KNOB,DEADBIT \?CCL15
+	PRINT	ALREADY-IS
+	RTRUE	
+?CCL15:	CALL	HELD?,HAT
+	ZERO?	STACK \?CCL17
+	PRINT	YNH
+	CALL	TRPRINT,HAT
+	RSTACK	
+?CCL17:	FSET	HAT,EVERYBIT
+	FSET	KNOB,DEADBIT
+	MOVE	HAT,LIBRARY
+	PRINTI	"You prop"
+	CALL	TPRINT,HAT
+	PRINTI	" back on"
+	CALL	TRPRINT,KNOB
+	RSTACK	
+?CCL10:	EQUAL?	PRSA,V?EXAMINE \FALSE
+	FSET?	KNOB,DEADBIT \FALSE
+	CALL	CTPRINT,HAT
+	PRINTI	" is on"
+	CALL	TRPRINT,KNOB
+	RSTACK	
+
+
+	.FUNCT	STAIRTOP-F,RARG
+	EQUAL?	RARG,M-LOOK \FALSE
+	PRINTI	"The east-west hallway opens here to curve into a grand staircase sweeping down to the foyer."
+	RTRUE	
+
+
+	.FUNCT	DIVAN-F
+	EQUAL?	PRSA,V?EXAMINE \?CCL3
+	PRINTI	"Backless, upholstered in Oriental silk,"
+	CALL	TPRINT,DIVAN
+	PRINTI	" looks exotic and comfortable"
+	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?ENTER,V?CLIMB-ON,V?BOARD \?CCL5
+	PRINTR	"You haven't time to relax now."
+?CCL5:	CALL	UNIMPORTANT-THING
+	RSTACK	
+
+
+	.FUNCT	PAIR-F
+	CALL	TOUCHING?,PAIR
+	ZERO?	STACK /FALSE
+	PRINT	YOU-CANT
+	PRINTI	"reach them. Ladies don't carry "
+	PRINTD	PISTOL
+	PRINTR	"s, anyway."
+
+
+	.FUNCT	LAFS-ROOM-F,RARG,THING
+	EQUAL?	RARG,M-BEG \?CCL3
+	ZERO?	LAFOND-LOOKING /?CCL3
+	GRTR?	LAFOND-CTR,9 \?CCL8
+	EQUAL?	PRSO,SPICES,PINCH /?CCL8
+	EQUAL?	PRSA,V?WEAR,V?TAKE \?CCL8
+	EQUAL?	PRSA,V?WEAR,V?TAKE \TRUE
+	PRINTD	LAFOND
+	PRINTI	" stops you"
+	PRINT	PCR
+	RTRUE	
+?CCL8:	EQUAL?	PRSI,LAUD,BOTTLE /?CTR14
+	EQUAL?	PRSO,LAUD,BOTTLE \?CCL15
+?CTR14:	SET	'THING,BOTTLE
+	JUMP	?CND6
+?CCL15:	EQUAL?	PRSA,V?POINT,V?WAVE,V?PUT \FALSE
+	EQUAL?	MIRROR,PRSO,PRSI \?CCL22
+	SET	'THING,MIRROR
+	JUMP	?CND6
+?CCL22:	EQUAL?	TRAY,PRSO,PRSI \FALSE
+	SET	'THING,TRAY
+?CND6:	REMOVE	THING
+	PRINTI	"Lafond bounds to your side, grabbing"
+	CALL	TPRINT,THING
+	PRINTI	" out of "
+	PRINTD	HANDS
+	PRINTI	" before you can use it. ""What have we here? Trying to "
+	EQUAL?	THING,BOTTLE \?CCL27
+	PRINTI	"poison "
+	PRINTD	ME
+	PRINTI	"? Or me?"
+	JUMP	?CND25
+?CCL27:	EQUAL?	THING,MIRROR,TRAY \?CND25
+	PRINTI	"signal for help? You are beyond help."
+?CND25:	PRINTI	""" He throws it out"
+	CALL	TRPRINT,SHUTTERS
+	RSTACK	
+?CCL3:	EQUAL?	RARG,M-ENTER \?CCL30
+	FSET?	LAFS-ROOM,TOUCHBIT /?CCL30
+	FSET	LAFS-ROOM,TOUCHBIT
+	INC	'SCORE
+	SET	'LAFOND-CTR,1
+	CALL	QUEUE,I-LSED,1
+	PRINTI	"""Welcome, ma petite"
+	FSET?	GOWN,WORNBIT /?CND33
+	PRINTI	" -- but where is your "
+	PRINTD	GOWN
+	PRINTI	"? Ah, chacun a son gout"
+?CND33:	PRINTI	"."" Lafond bows you in"
+	PRINT	PCR
+	CRLF	
+	RTRUE	
+?CCL30:	EQUAL?	RARG,M-LOOK \FALSE
+	PRINTD	LAFOND
+	PRINTI	"'s bedroom shows all the outpourings of his megalomania. Royal hues of purple and gold weigh down the hangings on the bed and the eastward window, as if trying to smother the moonbeam shining in."
+	RTRUE	
+
+
+	.FUNCT	LAFS-EXIT
+	ZERO?	LAFOND-LOOKING /?CCL3
+	PRINTI	"Lafond whirls you around. ""My pretty, you came here freely, but you may not leave freely."""
+	CRLF	
+	RFALSE	
+?CCL3:	IN?	BUTLER,HERE \?CCL5
+	FSET?	BUTLER,DEADBIT /?CCL5
+	CALL	CTPRINT,BUTLER
+	PRINTI	" stops you easily"
+	PRINT	PCR
+	RFALSE	
+?CCL5:	PRINTI	"You "
+	FSET?	LDOOR,OPENBIT /?CND8
+	FSET	LDOOR,OPENBIT
+	PRINTI	"open the door and "
+?CND8:	FSET?	BUTLER,DEADBIT \?CCL12
+	LOC	LAFOND
+	EQUAL?	STACK,HERE /?CCL12
+	PRINTI	"creep over the prostrate butler"
+	PRINT	PCR
+	CRLF	
+	RETURN	UPPER-HALL-E
+?CCL12:	PRINTI	"run out -- into"
+	CALL	TPRINT,BUTLER
+	PRINTI	"'s barrel chest and leering grin. You return to the bedroom"
+	IN?	LAFOND,HERE \?CCL17
+	PRINTC	46
+	CALL	TPRINT,LAFOND
+	PRINTI	" acts as if nothing has happened"
+	PRINT	PCR
+	RFALSE	
+?CCL17:	MOVE	BUTLER,LAFS-ROOM
+	PRINTC	44
+	CALL	TPRINT,BUTLER
+	PRINTI	" following. ""The governor said you were not to leave this room."""
+	CRLF	
+	RFALSE	
+
+
+	.FUNCT	SHUTTERS-F
+	EQUAL?	PRSA,V?DISEMBARK,V?EXIT,V?ENTER /?CTR2
+	EQUAL?	PRSA,V?BOARD,V?LEAP-OFF \?CCL3
+?CTR2:	PRINTR	"One look at the sheer drop, from sill to hedge to jagged rocks far below, is enough to dissuade you."
+?CCL3:	EQUAL?	PRSA,V?LOOK-INSIDE \?CCL7
+	PRINTI	"The full moon is high in the night sky. Some distance out from the shallow curve of the island, "
+	FSET?	SHIP,MUNGBIT \?CCL10
+	PRINTI	"black reefs catch the full force of the sea"
+	JUMP	?CND8
+?CCL10:	PRINTI	"you see the slow swelling of sails, grey turning black turning grey, on"
+	CALL	TPRINT,SHIP
+?CND8:	PRINTR	"."
+?CCL7:	EQUAL?	PRSA,V?EXAMINE \?CCL12
+	PRINTI	"Old fashioned wooden "
+	PRINTD	SHUTTERS
+	PRINTI	", not glass, fill"
+	CALL	TPRINT,WINDOW
+	PRINTI	" frame. A dusty "
+	PRINTD	MOONBEAM
+	PRINTI	" swirls in, setting alight threads of gold embroidered in"
+	CALL	TRPRINT,DRAPES
+	RSTACK	
+?CCL12:	EQUAL?	PRSA,V?SPOINT \?CCL14
+	EQUAL?	PRSO,SHIP \?CCL14
+	CALL	PROPOSE
+	RSTACK	
+?CCL14:	EQUAL?	PRSA,V?CLOSE \?CCL18
+	PRINT	BEAUTIFUL-NIGHT
+	RTRUE	
+?CCL18:	EQUAL?	PRSA,V?PUT-THROUGH \FALSE
+	EQUAL?	PRSO,HANDS \?CCL23
+	PRINT	HUH
+	RTRUE	
+?CCL23:	EQUAL?	PRSO,GREEN-GLASS,BLUE-GLASS,FLAGON \?CCL25
+	IN?	LAFOND,HERE \?CCL25
+	PRINTD	LAFOND
+	PRINTR	" stops you."
+?CCL25:	CALL	PUT-OBJ-THRU-WINDOW
+	RSTACK	
+
+
+	.FUNCT	GEN-SPICES
+	CALL	HELD?,PINCH
+	ZERO?	STACK /?CCL3
+	RETURN	PINCH
+?CCL3:	RETURN	SPICES
+
+
+	.FUNCT	SPICES-F
+	EQUAL?	PRSA,V?TAKE \?CCL3
+	IN?	PINCH,PROTAGONIST \?CCL6
+	PRINT	YOU-HAVE-ALREADY
+	CALL	ARPRINT,PINCH
+	RSTACK	
+?CCL6:	MOVE	PINCH,PROTAGONIST
+	FSET	PINCH,TOUCHBIT
+	SET	'HOLDING-PINCH,TRUE-VALUE
+	CALL	QUEUE,I-SPICE-DROP,3
+	PRINTI	"You take"
+	CALL	APRINT,PINCH
+	PRINTI	" between your thumb and forefinger"
+	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?EXAMINE \?CCL8
+	IN?	PINCH,PROTAGONIST \?CCL11
+	PRINTI	"You are holding"
+	CALL	APRINT,PINCH
+	PRINTI	". "
+	CALL	HELD?,TRAY,HERE
+	ZERO?	STACK /?CND12
+	LOC	SPICES
+	EQUAL?	STACK,WELL \?CND12
+	PRINTI	"More is in"
+	CALL	TPRINT,WELL
+	PRINTI	" of"
+	CALL	TRPRINT,TRAY
+?CND12:	CRLF	
+	RTRUE	
+?CCL11:	CALL	PERFORM,V?EXAMINE,WELL
+	RTRUE	
+?CCL8:	EQUAL?	PRSA,V?EAT \?CCL17
+	MOVE	PINCH,SPICES
+	PRINTI	"Your eyes start to water"
+	PRINT	PCR
+	RTRUE	
+?CCL17:	EQUAL?	PRSA,V?SMELL \?CCL19
+	MOVE	PINCH,SPICES
+	PRINTI	"You take a sharp sniff of"
+	CALL	TPRINT,SPICES
+	PRINTI	" and sneeze, until "
+	PRINTD	EYES
+	PRINTI	" fill with tears"
+	PRINT	PCR
+	RTRUE	
+?CCL19:	EQUAL?	PRSA,V?THROW \?CCL21
+	ZERO?	PRSI /?CCL21
+	EQUAL?	PRSI,SPICES /?CCL21
+	CALL	PERFORM,V?THROW-AT,PRSO,PRSI
+	RTRUE	
+?CCL21:	EQUAL?	PRSA,V?THROW-AT,V?PUT-ON,V?BLOW \FALSE
+	IN?	PINCH,PROTAGONIST \?CCL29
+	EQUAL?	PRSI,BUTLER \?CCL32
+	FSET?	BUTLER,DEADBIT /?CCL32
+	PRINTI	"You try to get close enough to"
+	CALL	TPRINT,BUTLER
+	PRINTR	", but he backs off. ""That wouldn't be seemly, Miss."""
+?CCL32:	EQUAL?	PRSI,ME \?CCL36
+	CALL	IMPOSSIBLES
+	RTRUE	
+?CCL36:	EQUAL?	PRSI,DAD,COOKIE,LUCY \?CCL38
+	PRINT	UNLADY
+	RTRUE	
+?CCL38:	EQUAL?	PRSI,CRULLEY \?CND30
+	LOC	CRULLEY
+	EQUAL?	STACK,DUNGEON \?CND30
+	PRINTD	CRULLEY
+	PRINTR	" snaps the whip at your elbow. ""Keep away from me!"""
+?CND30:	PRINTI	"You blow"
+	CALL	TPRINT,SPICES
+	PRINTI	" off your fingertips"
+	MOVE	PINCH,SPICES
+	ZERO?	PRSI /?CTR43
+	FSET?	PRSI,DEADBIT \?CCL44
+?CTR43:	PRINT	PCR
+	RTRUE	
+?CCL44:	EQUAL?	PRSI,LAFOND \?CCL48
+	EQUAL?	HERE,LAFS-ROOM \?CCL48
+	INC	'SCORE
+	MOVE	PINCH,SPICES
+	REMOVE	LAFOND
+	SET	'LAFOND-LOOKING,FALSE-VALUE
+	CALL	DEQUEUE,I-LSED
+	CALL	DEQUEUE,I-WONT-DRINK
+	CALL	QUEUE,I-LRETURNS,15
+	FSET	LDOOR,OPENBIT
+	REMOVE	LAF-GLASS
+	PRINTI	", directly into Lafond's face. He sneezes, his eyes watering from the heat of the peppers. Reaching blindly for some wine, he instead upsets the table, shattering a glass. Lafond stumbles cursing out of the room, in search of relief"
+	GRTR?	LAFOND-CTR,HORNY \?CND51
+	MOVE	PROTAGONIST,HERE
+	MOVE	RETICULE,PROTAGONIST
+	MOVE	CHEMISE,PROTAGONIST
+	FCLEAR	CHEMISE,EVERYBIT
+	FSET	CHEMISE,WORNBIT
+	MOVE	SHOES,PROTAGONIST
+	FSET	SHOES,WORNBIT
+	PRINTI	". You stand up, quickly pulling on"
+	CALL	TPRINT,CHEMISE
+?CND51:	PRINT	PCR
+	RTRUE	
+?CCL48:	PRINTI	" at"
+	CALL	TPRINT-PRSI
+	PRINTI	". "
+	PRINT	NOTHING-HAPPENS
+	RTRUE	
+?CCL29:	PRINT	YNH
+	PRINTI	" any "
+	PRINTD	SPICES
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	I-LRETURNS
+	EQUAL?	HERE,UPPER-HALL-E,LAFS-ROOM /?PRD5
+	FSET?	SHIP,MUNGBIT \FALSE
+?PRD5:	IN?	COOKIE,HERE /FALSE
+	CALL	JIGS-UP,STR?318
+	RSTACK	
+
+
+	.FUNCT	I-SPICE-DROP
+	IN?	PINCH,PROTAGONIST \FALSE
+	MOVE	PINCH,SPICES
+	PRINT	INDENT
+	PRINTI	"The spices dribble out from between your fingers"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	TRAY-F
+	EQUAL?	PRSA,V?EXAMINE \?CCL3
+	PRINTI	"Cabbage leaves are etched onto the mirror-bright "
+	PRINTD	TRAY
+	PRINTI	", forming a well in the center where the metallic stalks meet."
+	LOC	CHICKEN
+	EQUAL?	STACK,TRAY \?CCL6
+	PRINTI	" Some "
+	PRINTD	CHICKEN
+	PRINTI	" is heaped around the dry spices filling"
+	CALL	TRPRINT,WELL
+	RSTACK	
+?CCL6:	CRLF	
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?POINT,V?PUT \?CCL8
+	EQUAL?	PRSI,MOONBEAM,SHUTTERS,SHIP \?CCL8
+	CALL	SIGNAL-SHIP,TRAY
+	RSTACK	
+?CCL8:	EQUAL?	PRSA,V?EMPTY \?CCL12
+	PRINTI	"You have no other way of carrying"
+	CALL	TRPRINT,CHICKEN
+	RSTACK	
+?CCL12:	EQUAL?	PRSA,V?PUT-ON,V?PUT \FALSE
+	EQUAL?	PRSI,TRAY \FALSE
+	PRINTI	"Because of the metal work, nothing sits flat on"
+	CALL	TRPRINT,TRAY
+	RSTACK	
+
+
+	.FUNCT	WELL-F
+	EQUAL?	PRSA,V?LOOK-INSIDE,V?EXAMINE \?CCL3
+	IN?	SPICES,WELL \?CCL6
+	CALL	CTPRINT,WELL
+	PRINTI	" in"
+	CALL	TPRINT,TRAY
+	PRINTI	" is filled with a mixture of salt and other spices, predominantly red and black pepper"
+	PRINT	PCR
+	RTRUE	
+?CCL6:	PRINTR	"It is empty."
+?CCL3:	EQUAL?	PRSA,V?TAKE \FALSE
+	CALL	CTPRINT,WELL
+	PRINTR	" is part of the tray!"
+
+
+	.FUNCT	CHICKEN-F
+	EQUAL?	PRSA,V?TAKE,V?EAT \?CCL3
+	PRINTI	"You sprinkle some "
+	PRINTD	SPICES
+	PRINTI	" on a wing and nibble at it. The peppery heat hits you like a wave, leaving you gasping, eyes watering"
+	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?EXAMINE \?CCL5
+	IN?	CHICKEN,TRAY \?CCL8
+	CALL	PERFORM,V?EXAMINE,TRAY
+	RTRUE	
+?CCL8:	CALL	CTPRINT,CHICKEN
+	PRINTI	" looks tasty"
+	PRINT	PCR
+	RTRUE	
+?CCL5:	EQUAL?	PRSA,V?PUT-ON \?CCL10
+	EQUAL?	PRSO,PINCH,SPICES \?CCL10
+	CALL	PERFORM,V?EAT,CHICKEN
+	RTRUE	
+?CCL10:	EQUAL?	PRSA,V?PUT \FALSE
+	EQUAL?	PRSO,CHICKEN \FALSE
+	CALL	PERFORM,V?EAT,CHICKEN
+	RTRUE	
+
+
+	.FUNCT	FLAGON-F
+	EQUAL?	PRSA,V?EXAMINE,V?LOOK-INSIDE,V?SHAKE \?CCL3
+	PRINTR	"Some wine sloshes around inside."
+?CCL3:	EQUAL?	PRSA,V?TAKE \?CCL5
+	FSET?	FLAGON,TRYTAKEBIT \?CCL5
+	PRINTI	"Lafond takes it from you, setting it on"
+	CALL	TRPRINT,TABLE
+	RSTACK	
+?CCL5:	EQUAL?	PRSA,V?DROP \?CCL9
+	EQUAL?	HERE,LAFS-ROOM \?CCL9
+	MOVE	FLAGON,TABLE
+	PRINTI	"You set"
+	CALL	TPRINT,FLAGON
+	PRINTI	" on"
+	CALL	TRPRINT,TABLE
+	RSTACK	
+?CCL9:	EQUAL?	PRSA,V?THROW,V?EMPTY \?CCL13
+	EQUAL?	HERE,LAFS-ROOM \?CCL13
+	IN?	LAFOND,HERE \?CCL13
+	CALL	FWTD,SMACK-YOUR-FACE
+	RSTACK	
+?CCL13:	EQUAL?	PRSA,V?DRINK-FROM \FALSE
+	PRINT	UNLADY
+	RTRUE	
+
+
+	.FUNCT	WINE-F
+	EQUAL?	PRSA,V?GIVE,V?DRINK,V?EAT /?CTR2
+	EQUAL?	PRSA,V?SHOW \?CCL3
+?CTR2:	CALL	HELD?,BLUE-GLASS
+	ZERO?	STACK /?CCL8
+	CALL	IMBIBE-WINE,BLUE-GLASS
+	RSTACK	
+?CCL8:	CALL	HELD?,GREEN-GLASS
+	ZERO?	STACK /?CCL10
+	CALL	IMBIBE-WINE,GREEN-GLASS
+	RSTACK	
+?CCL10:	PRINT	YNH
+	PRINTR	" a goblet of wine!"
+?CCL3:	EQUAL?	PRSO,WINE \?CCL12
+	EQUAL?	PRSA,V?POUR \?CCL12
+	ZERO?	PRSI \?CCL17
+	EQUAL?	P-PRSA-WORD,W?SPILL \?CCL20
+	EQUAL?	HERE,LAFS-ROOM \?CCL20
+	IN?	LAFOND,HERE \?CCL20
+	CALL	FWTD,SMACK-YOUR-FACE
+	RSTACK	
+?CCL20:	CALL	SPECIFY-WHAT,STR?277,PRSO
+	RSTACK	
+?CCL17:	EQUAL?	PRSI,FLAGON \?CCL25
+	PRINTI	"It's not sanitary to pour wine back into"
+	CALL	TRPRINT,FLAGON
+	RSTACK	
+?CCL25:	EQUAL?	PRSI,GREEN-GLASS,BLUE-GLASS \?CCL27
+	GETP	PRSI,P?CONTENTS
+	EQUAL?	STACK,WINED,W-P \?CCL30
+	PRINTR	"It is already full!"
+?CCL30:	CALL	POUR-WINE,PRSI
+	RSTACK	
+?CCL27:	PRINT	POLITE-SOCIETY
+	RTRUE	
+?CCL12:	EQUAL?	PRSA,V?WRING,V?POUR-FROM \?CCL32
+	EQUAL?	PRSO,WINE \?CCL32
+	CALL	SPECIFY-WHAT,STR?277,PRSO
+	RSTACK	
+?CCL32:	EQUAL?	PRSA,V?THROW,V?DROP \FALSE
+	EQUAL?	HERE,LAFS-ROOM \?CCL39
+	IN?	LAFOND,HERE \?CCL39
+	CALL	LAFS-DROP
+	RSTACK	
+?CCL39:	CALL	HELD?,BLUE-GLASS
+	ZERO?	STACK /?CCL43
+	GETP	BLUE-GLASS,P?CONTENTS
+	GRTR?	STACK,0 \?CCL43
+	CALL	PERFORM,V?DROP,BLUE-GLASS
+	RTRUE	
+?CCL43:	CALL	HELD?,GREEN-GLASS
+	ZERO?	STACK /?CCL47
+	GETP	GREEN-GLASS,P?CONTENTS
+	GRTR?	STACK,0 \?CCL47
+	CALL	PERFORM,V?DROP,GREEN-GLASS
+	RTRUE	
+?CCL47:	PRINT	YNH
+	PRINTR	" any wine!"
+
+
+	.FUNCT	IMBIBE-WINE,VESSEL
+	GETP	VESSEL,P?CONTENTS
+	EQUAL?	STACK,0,POISONED \?CCL3
+	PRINTI	"There is no wine in"
+	CALL	TRPRINT,VESSEL
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?SHOW,V?GIVE \?CCL5
+	CALL	PERFORM,V?GIVE,VESSEL,PRSI
+	RTRUE	
+?CCL5:	GETP	VESSEL,P?CONTENTS
+	EQUAL?	STACK,W-P \?CND1
+	CALL	QUEUED?,I-SLEEP
+	ZERO?	STACK \?CND1
+	CALL	QUEUE,I-SLEEP,2
+?CND1:	SET	'REACTION,REACTION-POSITIVE
+	PUTP	VESSEL,P?CONTENTS,0
+	PRINTI	"You empty"
+	CALL	TPRINT,VESSEL
+	PRINTI	" of wine"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	POUR-WINE,VESSEL,LAFOND-POURS=0
+	GETP	FLAGON,P?CONTENTS
+	EQUAL?	STACK,POISONED \?CCL3
+	PUTP	VESSEL,P?CONTENTS,W-P
+	JUMP	?CND1
+?CCL3:	GETP	VESSEL,P?CONTENTS
+	ADD	STACK,1
+	PUTP	VESSEL,P?CONTENTS,STACK
+?CND1:	ZERO?	LAFOND-POURS \TRUE
+	PRINTI	"You fill"
+	CALL	TPRINT,VESSEL
+	PRINTI	" with wine"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	I-WATCH-SLEEP
+	ZERO?	DRUGGEE /FALSE
+	EQUAL?	DRUGGEE,BUTLER \?CCL5
+	EQUAL?	WATCH-CTR,2 \?CCL5
+	INC	'SCORE
+	FSET	BUTLER,DEADBIT
+	IN?	BUTLER,HERE /?CCL10
+	PRINT	INDENT
+	PRINTI	"You hear a ""thump-phoosh,"" like someone slumping against a wall"
+	PRINT	PCR
+	JUMP	?CND8
+?CCL10:	EQUAL?	HERE,LAFS-ROOM \?CND8
+	CALL	HELD?,BOTTLE,HERE
+	ZERO?	STACK /?CND12
+	REMOVE	BOTTLE
+	PRINT	INDENT
+	PRINTI	"With a grunt of anger, the butler realizes he has been drugged. He grabs"
+	CALL	TPRINT,BOTTLE
+	PRINTI	" and throws it out"
+	CALL	TRPRINT,SHUTTERS
+?CND12:	PRINT	INDENT
+	CALL	CTPRINT,DRUGGEE
+	GET	WATCHING-SLEEPY,WATCH-CTR
+	PRINT	STACK
+	PRINT	PCR
+?CND8:	SET	'DRUGGEE,FALSE-VALUE
+	RTRUE	
+?CCL5:	IN?	DRUGGEE,HERE \?CND1
+	PRINT	INDENT
+	CALL	CTPRINT,DRUGGEE
+	GET	WATCHING-SLEEPY,WATCH-CTR
+	PRINT	STACK
+	PRINT	PCR
+?CND1:	CALL	QUEUE,I-WATCH-SLEEP,1
+	INC	'WATCH-CTR
+	RETURN	WATCH-CTR
+
+
+	.FUNCT	I-CROC-SLEEPS
+	EQUAL?	HERE,ANTEROOM \?CND1
+	PRINT	INDENT
+	PRINTI	"Without warning,"
+	CALL	TPRINT,CROC
+	PRINTI	" relaxes, eyes closed, asleep."
+	CRLF	
+?CND1:	INC	'SCORE
+	SET	'CROC-SLEEP,TRUE-VALUE
+	SET	'MOUTH-SHUT,TRUE-VALUE
+	RFALSE	
+
+
+	.FUNCT	I-SLEEP
+	PRINT	INDENT
+	INC	'SLEEP-CTR
+	GET	GETTING-SLEEPY,SLEEP-CTR
+	PRINT	STACK
+	CRLF	
+	LESS?	SLEEP-CTR,4 \?CCL3
+	CALL	QUEUE,I-SLEEP,2
+	RSTACK	
+?CCL3:	EQUAL?	SLEEP-CTR,4 \FALSE
+	PRINT	INDENT
+	EQUAL?	HERE,ON-LADDER,RIGGING-ROOM \?CCL8
+	CALL	JIGS-UP,STR?319
+	RSTACK	
+?CCL8:	CALL	SHIP-BOARD,HERE
+	ZERO?	STACK /?CCL10
+	CALL	QUEUED?,I-LOOK-SEA
+	ZERO?	STACK \?CTR9
+	CALL	QUEUED?,I-SHIP-EXPLODES
+	ZERO?	STACK /?CCL10
+?CTR9:	CALL	JIGS-UP,STR?320
+	RSTACK	
+?CCL10:	PRINTI	"You wake at sunrise"
+	FSET?	LAFS-ROOM,TOUCHBIT /?CND15
+	PRINTI	", too late to save your father or his friend Jamison"
+?CND15:	CALL	FWTD,STR?321
+	RSTACK	
+
+
+	.FUNCT	GLASS-F
+	EQUAL?	PRSA,V?LOOK-INSIDE,V?EXAMINE \?CCL3
+	CALL	CTPRINT,PRSO
+	GETP	PRSO,P?CONTENTS
+	GET	GLASS-DESC,STACK
+	PRINT	STACK
+	PRINT	PCR
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?CLOSE,V?OPEN \?CCL5
+	CALL	IMPOSSIBLES
+	RSTACK	
+?CCL5:	EQUAL?	PRSA,V?DRINK-FROM \?CCL7
+	ZERO?	PRSI /?CCL10
+	CALL	IMBIBE-WINE,PRSI
+	RSTACK	
+?CCL10:	CALL	IMBIBE-WINE,PRSO
+	RSTACK	
+?CCL7:	EQUAL?	PRSA,V?FILL \?CCL12
+	CALL	PERFORM,V?POUR,WINE,PRSO
+	RTRUE	
+?CCL12:	EQUAL?	PRSA,V?DROP \?CCL14
+	EQUAL?	HERE,LAFS-ROOM \?CCL14
+	MOVE	PRSO,TABLE
+	PRINTI	"You set"
+	CALL	TPRINT-PRSO
+	PRINTI	" on"
+	CALL	TRPRINT,TABLE
+	RSTACK	
+?CCL14:	EQUAL?	PRSA,V?THROW-AT,V?MUNG,V?THROW \?CCL18
+	CALL	LAFS-DROP
+	RSTACK	
+?CCL18:	EQUAL?	PRSA,V?TAKE \FALSE
+	EQUAL?	PRSO,LAUD \?CCL23
+	CALL	IMPOSSIBLES
+	RSTACK	
+?CCL23:	EQUAL?	PRSO,GREEN-GLASS \?CCL25
+	LESS?	LAFOND-CTR,3 \?CCL25
+	EQUAL?	HERE,LAFS-ROOM \?CCL25
+	PRINTD	LAFOND
+	PRINTR	" stops you. ""That is mine."""
+?CCL25:	CALL	HELD?,BLUE-GLASS
+	ZERO?	STACK \?CTR29
+	CALL	HELD?,GREEN-GLASS
+	ZERO?	STACK /FALSE
+?CTR29:	PRINT	YOU-HAVE-ALREADY
+	PRINTI	" a goblet"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	LAFS-DROP
+	EQUAL?	PRSO,BLUE-GLASS,GREEN-GLASS \?CCL3
+	REMOVE	PRSO
+	PUTP	PRSO,P?CONTENTS,0
+	PRINTI	"The delicate glass of"
+	CALL	TPRINT-PRSO
+	PRINTI	" shatters into pieces."
+	CRLF	
+	JUMP	?CND1
+?CCL3:	EQUAL?	PRSO,WINE \?CCL5
+	PRINTI	"You dash"
+	CALL	TPRINT,WINE
+	PRINTI	" into Lafond's face."
+	CRLF	
+	JUMP	?CND1
+?CCL5:	CALL	WASTES
+?CND1:	EQUAL?	HERE,LAFS-ROOM \TRUE
+	IN?	LAFOND,HERE \TRUE
+	CALL	FWTD,SMACK-YOUR-FACE
+	RSTACK	
+
+
+	.FUNCT	GALLERY-F,RARG,GUY=0
+	EQUAL?	RARG,M-BEG \?CCL3
+	SET	'GUY,HERO
+	CALL	TOUCHING?,GUY
+	ZERO?	STACK \?CTR5
+	SET	'GUY,LAFOND
+	CALL	TOUCHING?,GUY
+	ZERO?	STACK \?CTR5
+	SET	'GUY,DAD
+	CALL	TOUCHING?,GUY
+	ZERO?	STACK \?CTR5
+	SET	'GUY,LUCY
+	CALL	TOUCHING?,GUY
+	ZERO?	STACK \?CTR5
+	SET	'GUY,COOKIE
+	CALL	TOUCHING?,GUY
+	ZERO?	STACK \?CTR5
+	SET	'GUY,RAPIER
+	CALL	TOUCHING?,GUY
+	ZERO?	STACK /?CCL6
+?CTR5:	CALL	CANT-REACH,GUY
+	RSTACK	
+?CCL6:	EQUAL?	PRSA,V?THROW-AT \?CCL14
+	PRINTR	"You missed."
+?CCL14:	EQUAL?	PRSO,GALLERY \?CCL16
+	EQUAL?	PRSA,V?LOOK,V?EXAMINE \?CCL16
+	CALL	V-LOOK
+	RSTACK	
+?CCL16:	EQUAL?	PRSO,BALLROOM \?CCL20
+	EQUAL?	PRSA,V?EXAMINE \?CCL23
+	CALL	V-LOOK
+	RSTACK	
+?CCL23:	EQUAL?	PRSA,V?LEAP,V?ENTER \FALSE
+	CALL	PERFORM,V?SWING,ROPE
+	RTRUE	
+?CCL20:	EQUAL?	PRSA,V?LEAP-OFF \?CCL27
+	CALL	PERFORM,V?SWING,ROPE
+	RTRUE	
+?CCL27:	EQUAL?	PRSA,V?SWING \?CCL29
+	EQUAL?	PRSO,ROOMS \?CCL29
+	CALL	PERFORM,V?SWING,ROPE
+	RTRUE	
+?CCL29:	EQUAL?	PRSA,V?TELL-ABOUT,V?TELL,V?ASK-ABOUT \FALSE
+	CALL	RUNNING?,I-DUEL
+	ZERO?	STACK /FALSE
+	PRINTI	"No one is listening to you."
+	CRLF	
+	CALL	STOP
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-ENTER \?CCL37
+	CALL	RUNNING?,I-DUEL
+	ZERO?	STACK /?CCL37
+	FSET	HERO,NDESCBIT
+	FSET	LAFOND,NDESCBIT
+	FSET	COOKIE,NDESCBIT
+	RTRUE	
+?CCL37:	EQUAL?	RARG,M-LOOK \FALSE
+	PRINTI	"You are on a wide balcony overlooking the ballroom. A hallway lies to the north.
+   Down on"
+	PRINT	DANCE-FLOOR
+	CALL	RUNNING?,I-DUEL
+	ZERO?	STACK /?CCL44
+	CALL	TPRINT,DANCERS
+	PRINTI	"s are pressed in a wide circle around Nicholas and Lafond. Cookie stands anxiously in the door to the veranda, near"
+	CALL	TPRINT,DAD
+	PRINTI	" and Lucy"
+	JUMP	?CND42
+?CCL44:	FSET?	BALLROOM,EVERYBIT \?CCL46
+	PRINTI	" a small number of Jamison's scruffiest men are corralling"
+	CALL	TPRINT,DANCERS
+	PRINTI	" into a screaming huddle in the center of the room"
+	JUMP	?CND42
+?CCL46:	PRINTI	" you see myriad colors as the guests weave the intricate steps of their dances"
+?CND42:	PRINTC	46
+	RTRUE	
+
+
+	.FUNCT	ROPE-F,OARG=0
+	ZERO?	OARG /?CCL3
+	EQUAL?	OARG,M-DESC? /TRUE
+	PRINT	INDENT
+	CALL	DESC-ROPE
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?EXAMINE \?CCL7
+	CALL	DESC-ROPE
+	RSTACK	
+?CCL7:	EQUAL?	PRSA,V?CLIMB-ON,V?CLIMB-DOWN,V?SWING \?CCL9
+	FSET?	ROPE,EVERYBIT \?CCL12
+	CALL	CTPRINT,ROPE
+	PRINTI	" is looped over the railing -- you'd hang "
+	PRINTD	ME
+	PRINT	PCR
+	RTRUE	
+?CCL12:	IN?	COOKIE,HERE \?CCL14
+	CALL	RUNNING?,I-DUEL
+	ZERO?	STACK \?CCL14
+	PRINTD	COOKIE
+	PRINTR	" grabs hold of you, ""Ye lost yer mind, lass!"""
+?CCL14:	PRINTI	"""Aaieeee!"" The cry comes uncalled to your lips as you swoop down from the balcony"
+	ZERO?	BOY-DRESS? \?CND17
+	PRINTI	", petticoats flying,"
+?CND17:	PRINTI	" on the end of"
+	CALL	TRPRINT,ROPE
+	PRINT	INDENT
+	CALL	RUNNING?,I-DUEL
+	ZERO?	STACK /?CCL21
+	LESS?	HERO-CTR,15 \?CCL24
+	CALL	DEQUEUE,I-DUEL
+	FCLEAR	RAPIER,NDESCBIT
+	MOVE	HERO,BEACH
+	FCLEAR	HERO,NDESCBIT
+	MOVE	LAFOND,BALLROOM
+	FCLEAR	LAFOND,NDESCBIT
+	MOVE	DAD,BEACH
+	MOVE	LUCY,BEACH
+	MOVE	COOKIE,BEACH
+	FCLEAR	COOKIE,NDESCBIT
+	FCLEAR	BALLROOM,EVERYBIT
+	FSET	VER-DOOR,OPENBIT
+	FSET	LAFOND,MUNGBIT
+	INC	'SCORE
+	IN?	BLUE-GLASS,PROTAGONIST \?CCL27
+	REMOVE	BLUE-GLASS
+	JUMP	?CND25
+?CCL27:	IN?	GREEN-GLASS,PROTAGONIST \?CND25
+	REMOVE	GREEN-GLASS
+?CND25:	IN?	PINCH,PROTAGONIST \?CND29
+	MOVE	PINCH,SPICES
+?CND29:	CALL	ROB,PROTAGONIST,BALLROOM
+	SET	'LAFOND-CTR,1
+	CALL	QUEUE,I-ENDGAME,6
+	PRINTI	"Your timing is perfect: you slam into Lafond just as he steps into his lunge. His rapier stabs wildly, piercing Nicholas's shoulder, missing his heart. You and Lafond roll into a snowball of "
+	ZERO?	BOY-DRESS? \?CCL33
+	PRINTI	"petticoats"
+	JUMP	?CND31
+?CCL33:	PRINTI	"breeches"
+?CND31:	PRINTI	" and brocade, dropping everything between you."
+	CALL	CLEAR-SCREEN,15
+	PRINT	INDENT
+	PRINTI	"Nicholas shouts, from far away, ""Let me go! Let me deliver Lafond to a 'better' world.""
+   ""A gentleman can't kill an unconscious man!"" That is Papa's voice. ""And you're in no shape to continue, Nicholas. Rodney -- help my daughter. I'll take Nick.""
+   Cookie leans over you. ""We must get back to the ship, Miss. Dragoons surround the house."" Nicholas, injured but still arguing, is already on the veranda, half-forced, half-supported by your father, shadowed by Lucy. Cookie helps you to your feet and rushes after them, expecting you to follow. Lafond lies nearby, apparently unconscious"
+	PRINT	PCR
+	CRLF	
+	CALL	GOTO,BALLROOM
+	RSTACK	
+?CCL24:	CALL	JIGS-UP,STR?322
+	RSTACK	
+?CCL21:	FSET?	BALLROOM,EVERYBIT \?CCL35
+	CALL	JIGS-UP,STR?323
+	RSTACK	
+?CCL35:	CALL	FWTD,STR?324
+	RSTACK	
+?CCL9:	EQUAL?	PRSA,V?TIE \?CCL37
+	EQUAL?	PRSI,RAILING \?CCL37
+	FSET?	ROPE,EVERYBIT \?CCL42
+	PRINT	ALREADY-IS
+	RTRUE	
+?CCL42:	FSET	ROPE,EVERYBIT
+	PRINTR	"Tied."
+?CCL37:	EQUAL?	PRSA,V?REMOVE,V?UNTIE \?CCL44
+	FSET?	ROPE,EVERYBIT \?CCL47
+	FCLEAR	ROPE,EVERYBIT
+	PRINTI	"Untied. "
+	CALL	CTPRINT,CHANDELIER
+	PRINTR	" swings slightly, dribs of hot wax spilling to the floor."
+?CCL47:	CALL	WASTES
+	RSTACK	
+?CCL44:	EQUAL?	PRSA,V?TAKE \?CCL49
+	FSET?	ROPE,EVERYBIT \?CCL52
+	CALL	DO-FIRST,STR?325
+	RSTACK	
+?CCL52:	FSET?	ROPE,DEADBIT \?CCL54
+	CALL	CANT-REACH,ROPE
+	RSTACK	
+?CCL54:	PRINTI	"Pray describe what you intend to do with"
+	CALL	TRPRINT,ROPE
+	RSTACK	
+?CCL49:	EQUAL?	PRSA,V?FIDDLE,V?RAISE,V?MOVE \FALSE
+	CALL	CTPRINT,CHANDELIER
+	PRINTI	" swings, but is too heavy for you to pull up"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	DESC-ROPE
+	PRINTI	"A "
+	PRINTD	CHANDELIER
+	PRINTI	" is held above"
+	PRINT	DANCE-FLOOR
+	PRINTI	" by a rope and pulley system, so that the servants can lower it to light and snuff its candles. Several feet of "
+	PRINTD	ROPE
+	PRINTI	" hang down from the pulley, the "
+	FSET?	ROPE,EVERYBIT \?CCL3
+	PRINTI	"excess tied around"
+	JUMP	?CND1
+?CCL3:	PRINTI	"end resting on"
+?CND1:	CALL	TPRINT,RAILING
+	PRINTC	46
+	EQUAL?	PRSA,V?EXAMINE \TRUE
+	CRLF	
+	RTRUE	
+
+
+	.FUNCT	CHAND-F
+	EQUAL?	PRSA,V?OFF \?CCL3
+	CALL	CANT-REACH,CHANDELIER
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?EXAMINE \?CCL5
+	PRINTI	"Held in place by a rope running through a pulley,"
+	CALL	TPRINT,CHANDELIER
+	PRINTI	" gently swings its one hundred candles over"
+	PRINT	DANCE-FLOOR
+	PRINT	PCR
+	RTRUE	
+?CCL5:	EQUAL?	PRSA,V?SWING,V?UNTIE \FALSE
+	CALL	PERFORM-PRSA,ROPE
+	RSTACK	
+
+
+	.FUNCT	CRACK-F
+	EQUAL?	PRSA,V?LOOK-INSIDE \?CCL3
+	CALL	PERFORM,V?EXAMINE,SHIP
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?BOARD,V?CLIMB-ON,V?ENTER \FALSE
+	CALL	CTPRINT,CRACK
+	PRINTR	" is too narrow."
+
+
+	.FUNCT	HORN-F
+	EQUAL?	PRSA,V?EMPTY \?CCL3
+	PRINTR	"You start to empty it, but reconsider."
+?CCL3:	EQUAL?	PRSA,V?EMPTY-FROM \?CCL5
+	EQUAL?	PRSI,HORN \?CCL5
+	CALL	PERFORM,V?EMPTY,HORN
+	RTRUE	
+?CCL5:	EQUAL?	PRSA,V?TAKE \?CCL9
+	CALL	ITAKE,FALSE-VALUE
+	EQUAL?	STACK,M-FATAL,FALSE-VALUE /?CCL9
+	FSET?	HORN,TOUCHBIT /?CCL9
+	FCLEAR	POWDER,INVISIBLE
+	PRINTR	"Taken."
+?CCL9:	EQUAL?	PRSA,V?FILL \?CCL14
+	EQUAL?	PRSO,HORN \?CCL14
+	CALL	CANT-VERB-A-PRSO,STR?326
+	RSTACK	
+?CCL14:	EQUAL?	PRSA,V?PUT,V?POUR \?CCL18
+	EQUAL?	PRSI,HORN \?CCL18
+	CALL	PERFORM,V?FILL,PRSI,PRSO
+	RTRUE	
+?CCL18:	EQUAL?	PRSA,V?CLOSE,V?OPEN \?CCL22
+	PRINT	YOU-CANT-SEE-ANY
+	PRINT	WAY-TO-DO-THAT
+	RTRUE	
+?CCL22:	EQUAL?	PRSA,V?LOOK-INSIDE,V?EXAMINE \?CCL24
+	PRINTI	"Almost triangular, with a little spout on top,"
+	CALL	TPRINT,HORN
+	PRINTI	" is similar to the one your father used to carry when hunting. It is filled with a mixture of "
+	PRINTD	POWDER
+	PRINTI	" and shot"
+	PRINT	PCR
+	RTRUE	
+?CCL24:	EQUAL?	PRSA,V?TAKE \FALSE
+	CALL	NOUN-USED,W?POWDER,HORN
+	ZERO?	STACK /FALSE
+	CALL	HELD?,HORN
+	ZERO?	STACK /FALSE
+	PRINTI	"You pour out some "
+	PRINTD	POWDER
+	PRINTR	". It blows away."
+
+
+	.FUNCT	ANTEROOM-F,RARG
+	EQUAL?	RARG,M-LOOK \?CCL3
+	PRINTI	"Two exits lead from this cavernous room, north and south. The walls drip with wet, forming a huge pool on the floor."
+	RTRUE	
+?CCL3:	EQUAL?	RARG,M-END \FALSE
+	ZERO?	CROC-FREE \?CCL8
+	IN?	DAD,HERE \?CCL8
+	PRINT	INDENT
+	PRINTI	"Your father stops, smiling at"
+	CALL	TPRINT,CROC
+	PRINTI	", ""Hello, chum, how are you?"" He bends over the creature, and "
+	ZERO?	MUZZLED /?CCL13
+	SET	'AWAITING-REPLY,6
+	CALL	QUEUE,I-REPLY,2
+	MOVE	GARTER,DAD
+	FCLEAR	GARTER,NDESCBIT
+	PRINTI	"laughs. ""That's my Lucy! Never one to shirk belling the cat. What a woman! Have you been to the kitchen, dear?"" He slips off"
+	CALL	TPRINT,GARTER
+	PRINTI	" and"
+	JUMP	?CND11
+?CCL13:	ZERO?	CROC-SLEEP /?CND11
+	PRINTI	"scratches its bumpy snout, muttering, ""Never seen you sleep like this before."" It stirs to life as "
+	PRINTD	DAD
+?CND11:	PRINTI	" walks over to you by the north entrance. The reptile"
+	ZERO?	CROC-SLEEP /?CND15
+	PRINTI	", waking,"
+?CND15:	SET	'CROC-FREE,TRUE-VALUE
+	SET	'MOUTH-SHUT,FALSE-VALUE
+	SET	'MUZZLED,FALSE-VALUE
+	SET	'CROC-SLEEP,FALSE-VALUE
+	FCLEAR	GARTER,TRYTAKEBIT
+	FSET	GARTER,TAKEBIT
+	PRINTR	" lunges after him, choking on its chain."
+?CCL8:	ZERO?	COOKIE-FIGHTING-CROC \FALSE
+	IN?	COOKIE,HERE \FALSE
+	SET	'COOKIE-FIGHTING-CROC,TRUE-VALUE
+	FSET	CROC,NDESCBIT
+	PRINT	INDENT
+	PRINTI	"Cookie rushes at"
+	CALL	TPRINT,CROC
+	PRINTI	", crying, ""I'll take care of this monster, sweetheart. You run by and do what you must do."" He dives headlong into"
+	CALL	TPRINT,POOL
+	IN?	RAPIER,COOKIE \?CND21
+	MOVE	RAPIER,HERE
+	PRINTI	", throwing free"
+	CALL	TPRINT,RAPIER
+?CND21:	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	CROC-EXIT
+	ZERO?	COOKIE-FIGHTING-CROC /?CCL3
+	CALL	DUNGEON-ENTRANCE
+	RSTACK	
+?CCL3:	ZERO?	MUZZLED \?CTR4
+	ZERO?	CROC-SLEEP /?CCL5
+?CTR4:	PRINTI	"You edge past the reptile"
+	PRINT	PCR
+	CRLF	
+	RETURN	DUNGEON
+?CCL5:	CALL	RUNNING?,I-CROC-OPENS-MOUTH
+	ZERO?	STACK /?CND8
+	CALL	DEQUEUE,I-CROC-OPENS-MOUTH
+?CND8:	CALL	CTPRINT,CROC
+	PRINTI	" roars at you. You retreat to the north entrance and the monster stills, waiting, chops open, almost smiling"
+	PRINT	PCR
+	RFALSE	
+
+
+	.FUNCT	DUNGEON-ENTRANCE
+	ZERO?	COOKIE-FIGHTING-CROC \?CCL2
+	RETURN	DUNGEON
+?CCL2:	FCLEAR	DUNGEON,TOUCHBIT
+	SET	'VERBOSITY,1
+	FSET?	CRULLEY,MUNGBIT /?CND1
+	ZERO?	CRULLEY-BACK \?CND1
+	SET	'CRULLEY-CTR,1
+	CALL	QUEUE,I-CDUNG,-1
+	PRINTI	"A whip cracks "
+	ZERO?	WHIPPING-SPEECH /?CCL9
+	SET	'WHIPPING-SPEECH,FALSE-VALUE
+	PRINTI	"the air. ""Flogs me, will ye, Cap'n? Taste it "
+	PRINTD	ME
+	PRINTI	", har."" Jamison groans, half conscious"
+	JUMP	?CND7
+?CCL9:	PRINTI	"against flesh"
+?CND7:	PRINTI	". You rush in"
+	PRINT	PCR
+	CRLF	
+?CND1:	RETURN	DUNGEON
+
+
+	.FUNCT	CROC-F,OARG=0
+	ZERO?	OARG /?CCL3
+	EQUAL?	OARG,M-DESC? /TRUE
+	FSET?	CROC,TOUCHBIT \?CCL8
+	PRINT	INDENT
+	CALL	CTPRINT,CROC
+	JUMP	?CND6
+?CCL8:	FSET	CROC,TOUCHBIT
+	PRINT	INDENT
+	PRINTI	"A "
+	PRINTD	CROC
+?CND6:	PRINTI	" lies half in the pool, "
+	ZERO?	CROC-SLEEP /?CND9
+	PRINTI	"sleeping."
+	RTRUE	
+?CND9:	PRINTI	"gazing at you,"
+	ZERO?	MUZZLED /?CCL13
+	CALL	APRINT,GARTER
+	PRINTI	" around its snout."
+	RTRUE	
+?CCL13:	ZERO?	MOUTH-SHUT /?CCL15
+	PRINTI	" mouth closed."
+	RTRUE	
+?CCL15:	PRINTI	" with baleful eyes, jaws wide open. Dagger-sharp teeth glint in"
+	CALL	TPRINT,TORCH
+	PRINTI	"light."
+	RTRUE	
+?CCL3:	EQUAL?	PRSA,V?PUT-ON \?CCL17
+	EQUAL?	PRSO,GARTER \?CCL17
+	ZERO?	CROC-FREE /?CCL22
+	REMOVE	PRSO
+	PRINT	CROC-LUNGES
+	PRINTI	"Screaming, you dash back, dropping"
+	CALL	TPRINT,GARTER
+	PRINTI	" into"
+	CALL	TRPRINT,POOL
+	RSTACK	
+?CCL22:	ZERO?	MOUTH-SHUT /?CCL24
+	MOVE	GARTER,CROC
+	FSET	GARTER,NDESCBIT
+	SET	'MUZZLED,TRUE-VALUE
+	FSET	GARTER,TRYTAKEBIT
+	FCLEAR	GARTER,TAKEBIT
+	ZERO?	CROC-SLEEP \?CCL27
+	CALL	QUEUED?,I-CROC-SLEEPS
+	ZERO?	STACK \?CND28
+	INC	'SCORE
+?CND28:	PRINTI	"With great daring and greater speed, you slip"
+	CALL	TPRINT,GARTER
+	PRINTI	" around"
+	CALL	TPRINT,CROC
+	PRINTI	"'s snout. "
+	CALL	CTPRINT,CROC
+	PRINTR	" thrashes about, unable to remove it."
+?CCL27:	CALL	CTPRINT,GARTER
+	PRINTI	" fits on its snout like a ring on a wedding finger"
+	PRINT	PCR
+	RTRUE	
+?CCL24:	CALL	CTPRINT,GARTER
+	PRINTI	" won't fit around that open maw"
+	PRINT	PCR
+	RTRUE	
+?CCL17:	ZERO?	CROC-SLEEP /?CCL31
+	EQUAL?	PRSA,V?ALARM \?CCL31
+	PRINTR	"That is the last thing you want to do!"
+?CCL31:	EQUAL?	PRSA,V?EMBRACE,V?KISS \?CCL35
+	PRINTR	"The very thought makes you shiver."
+?CCL35:	EQUAL?	PRSA,V?TOUCH,V?PUT-ON,V?PUT /?CTR36
+	EQUAL?	PRSA,V?ENTER \?CCL37
+?CTR36:	PRINTI	"It would be safer to stay distant and throw things at"
+	CALL	TRPRINT,CROC
+	RSTACK	
+?CCL37:	CALL	NOUN-USED,W?MOUTH,CROC
+	ZERO?	STACK /?CCL41
+	GET	P-ADJW,0
+	ZERO?	STACK \?CCL41
+	GET	P-ADJW,1
+	ZERO?	STACK /FALSE
+?CCL41:	EQUAL?	PRSA,V?MUZZLE \?CCL46
+	EQUAL?	PRSI,GARTER \?CCL46
+	CALL	PERFORM,V?PUT-ON,GARTER,CROC
+	RTRUE	
+?CCL46:	EQUAL?	PRSA,V?THROW-TO,V?GIVE,V?THROW /?CTR49
+	EQUAL?	PRSA,V?THROW-AT \?CCL50
+?CTR49:	ZERO?	COOKIE-FIGHTING-CROC /?CCL55
+	CALL	CTPRINT,CROC
+	PRINTR	" is too busy fighting Cookie to notice."
+?CCL55:	EQUAL?	PRSO,BOTTLE \?CCL57
+	PRINTR	"You might need that later."
+?CCL57:	EQUAL?	PRSO,RETICULE /FALSE
+	ZERO?	CROC-SLEEP /?CCL61
+	EQUAL?	PRSO,SALTS \?CCL64
+	EQUAL?	PRSA,V?GIVE \?CCL64
+	CALL	PERFORM,V?ALARM,CROC,SALTS
+	RTRUE	
+?CCL64:	PRINTI	"But"
+	CALL	TPRINT,CROC
+	PRINTR	" is asleep."
+?CCL61:	EQUAL?	PRSO,PINCH,SPICES \?CCL68
+	IN?	PINCH,PROTAGONIST \?CCL68
+	MOVE	PINCH,SPICES
+	CALL	CTPRINT,CROC
+	PRINTI	" blinks its eyes once, but takes no other notice of"
+	CALL	TRPRINT,SPICES
+	RSTACK	
+?CCL68:	ZERO?	CROC-FREE /?CCL72
+	REMOVE	PRSO
+	PRINT	CROC-LUNGES
+	CALL	CTPRINT,PRSO
+	PRINTI	" drops ignored into"
+	CALL	TRPRINT,POOL
+	RTRUE	
+?CCL72:	ZERO?	MUZZLED /?CCL74
+	CALL	CTPRINT,CROC
+	PRINTI	" is helpless! "
+	PRINT	MOTHER
+	RTRUE	
+?CCL74:	REMOVE	PRSO
+	SET	'MOUTH-SHUT,TRUE-VALUE
+	CALL	QUEUE,I-CROC-OPENS-MOUTH,2
+	CALL	CTPRINT,CROC
+	PRINTI	" snaps its jaws shut as"
+	CALL	TPRINT-PRSO
+	EQUAL?	PRSO,SALTS \?CCL77
+	PRINTI	" bounce"
+	PRINTI	" off its hide, sinking into"
+	CALL	TRPRINT,POOL
+	RSTACK	
+?CCL77:	PRINTI	" disappear"
+	EQUAL?	PRSO,PANTS /?CND78
+	PRINTC	115
+?CND78:	PRINTI	" into"
+	EQUAL?	PRSO,PORK \?CCL82
+	ZERO?	PORK-DOPED /?CND83
+	CALL	QUEUE,I-CROC-SLEEPS,3
+?CND83:	PRINTR	" its maw."
+?CCL82:	CALL	TRPRINT,POOL
+	RSTACK	
+?CCL50:	EQUAL?	PRSA,V?LEAP \?CCL86
+	PRINTR	"You can't jump that far."
+?CCL86:	EQUAL?	PRSA,V?THROW-AT,V?STHROW,V?SGIVE \?CCL88
+	CALL	PERFORM,V?THROW-TO,PRSI,CROC
+	RTRUE	
+?CCL88:	EQUAL?	PRSA,V?EXAMINE \?CCL90
+	ZERO?	COOKIE-FIGHTING-CROC /?CCL93
+	CALL	CTPRINT,POOL
+	PRINTI	" boils with the bodies of"
+	CALL	TPRINT,CROC
+	PRINTI	" and"
+	CALL	TRPRINT,COOKIE
+	RSTACK	
+?CCL93:	ZERO?	MUZZLED /?CCL95
+	CALL	CTPRINT,CROC
+	PRINTI	"'s snout is pinned closed by"
+	CALL	APRINT,GARTER
+	ZERO?	CROC-SLEEP /?CND96
+	PRINT	SNORTS-IN-SLEEP
+?CND96:	PRINT	PCR
+	RTRUE	
+?CCL95:	ZERO?	MOUTH-SHUT /?CCL99
+	PRINTI	"Two gleaming teeth poke out of"
+	CALL	TPRINT,CROC
+	PRINTI	"'s closed mouth"
+	ZERO?	CROC-SLEEP /?CND100
+	PRINT	SNORTS-IN-SLEEP
+?CND100:	PRINT	PCR
+	RTRUE	
+?CCL99:	CALL	CTPRINT,CROC
+	PRINTI	" smiles at you invitingly, white teeth shining in"
+	CALL	TPRINT,TORCH
+	PRINTR	"light."
+?CCL90:	EQUAL?	PRSA,V?KICK,V?MUNG,V?KILL \FALSE
+	ZERO?	COOKIE-FIGHTING-CROC /?CCL106
+	PRINTD	COOKIE
+	PRINTI	" is seeing to"
+	CALL	TRPRINT,CROC
+	RSTACK	
+?CCL106:	ZERO?	CROC-SLEEP /?CCL108
+	PRINTI	"Harm a sleeping animal! "
+	PRINT	MOTHER
+	RTRUE	
+?CCL108:	ZERO?	MUZZLED /?CCL110
+	PRINTI	"The tear welling up in"
+	CALL	TPRINT,CROC
+	PRINTI	"'s eye is rather poignant. You can't bear to hurt the beast in this state"
+	PRINT	PCR
+	RTRUE	
+?CCL110:	PRINTI	"You have no wish to get any closer to"
+	CALL	TRPRINT,CROC
+	RSTACK	
+
+
+	.FUNCT	I-CROC-OPENS-MOUTH
+	ZERO?	MUZZLED \FALSE
+	IN?	CROC,HERE \FALSE
+	SET	'MOUTH-SHUT,FALSE-VALUE
+	PRINT	INDENT
+	PRINTI	"With an inaudible creak,"
+	CALL	TPRINT,CROC
+	PRINTI	"'s mouth opens again"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	POOL-F
+	EQUAL?	PRSA,V?SWIM,V?CRAWL-UNDER,V?ENTER \?CCL3
+	PRINTI	"You splash around at the outskirts of"
+	CALL	TRPRINT,POOL
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?THROW-AT,V?THROW-TO,V?THROW \?CCL5
+	EQUAL?	PRSO,PORK \?CCL8
+	ZERO?	MOUTH-SHUT \?CCL8
+	ZERO?	CROC-SLEEP \?CCL8
+	PRINTI	"With a terrific splash,"
+	CALL	TPRINT,CROC
+	PRINTI	" throws itself after"
+	CALL	TPRINT-PRSO
+	PRINTI	". "
+	CALL	PERFORM,V?THROW,PORK,CROC
+	RTRUE	
+?CCL8:	EQUAL?	PRSO,BOTTLE \?CCL13
+	CALL	PERFORM,V?THROW,BOTTLE,CROC
+	RTRUE	
+?CCL13:	REMOVE	PRSO
+	CALL	CTPRINT,PRSO
+	PRINTI	" splashes into"
+	CALL	TRPRINT,POOL
+	RSTACK	
+?CCL5:	EQUAL?	PRSA,V?LOOK-INSIDE \?CCL15
+	PRINTI	"It's too murky to see anything"
+	PRINT	PCR
+	RTRUE	
+?CCL15:	EQUAL?	PRSA,V?PUT \?CCL17
+	REMOVE	PRSO
+	CALL	CTPRINT,PRSO
+	PRINTR	" sinks from sight."
+?CCL17:	EQUAL?	PRSA,V?DRINK-FROM,V?DRINK \FALSE
+	PRINTR	"Yechh!"
+
+
+	.FUNCT	DUNGEON-F,RARG
+	EQUAL?	RARG,M-LOOK \?CCL3
+	PRINTI	"You sense, rather than see, the rusty skeletons of old cages and torture devices that line the walls of this cavernous room. One flaming torch, high on a wall, casts mad licks of light into the darkness. Passages lead north and west. Set deep in the rocky floor is a"
+	CALL	TELL-OPEN/CLOSED,TRAP,TRUE-VALUE
+	PRINTC	32
+	PRINTD	TRAP
+	PRINT	PCR
+	PRINT	INDENT
+	CALL	DESC-MANACLES
+	RSTACK	
+?CCL3:	EQUAL?	RARG,M-BEG \?CCL5
+	ZERO?	ENDGAME /?CCL5
+	IN?	CRULLEY,HERE \?CCL5
+	FSET?	CRULLEY,MUNGBIT /?CCL5
+	EQUAL?	HERO,PRSO,PRSI \?PRD14
+	CALL	AFFIRMATIVE-ANSWER
+	ZERO?	STACK \?CTR11
+?PRD14:	CALL	TOUCHING?,HERO
+	ZERO?	STACK \?CTR11
+	CALL	TOUCHING?,MANACLES
+	ZERO?	STACK /?CCL12
+?CTR11:	PRINTD	CRULLEY
+	PRINTR	" growls, ""Keep away from 'im."""
+?CCL12:	CALL	TOUCHING?,TRAP
+	ZERO?	STACK /FALSE
+	EQUAL?	PRSA,V?BOARD,V?ENTER /FALSE
+	PRINTD	CRULLEY
+	PRINTR	" barks, ""Leave that alone."""
+?CCL5:	EQUAL?	RARG,M-END \FALSE
+	ZERO?	CRULLEY-BACK /FALSE
+	PRINT	INDENT
+	PRINTD	CRULLEY
+	PRINTI	" jumps out of the shadows at you."
+	CALL	JIGS-UP,FALL-TO-BOTTOM
+	RSTACK	
+
+
+	.FUNCT	DUNGEON-EXIT
+	CALL	RUNNING?,I-CDUNG
+	ZERO?	STACK /?CND1
+	CALL	DEQUEUE,I-CDUNG
+	FCLEAR	CRULLEY,EVERYBIT
+	PRINTI	"""Come back 'ere, wench!"""
+	CALL	TPRINT,CRULLEY
+	PRINT	CALLS-AFTER
+?CND1:	EQUAL?	P-WALK-DIR,P?WEST \?CCL5
+	RETURN	PASSAGE-4
+?CCL5:	EQUAL?	P-WALK-DIR,P?NORTH \FALSE
+	RETURN	ANTEROOM
+
+
+	.FUNCT	MANACLES-F
+	EQUAL?	PRSA,V?LOOK-INSIDE,V?EXAMINE \?CCL3
+	CALL	DESC-MANACLES
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?CLOSE \?CCL5
+	ZERO?	PRSI /?CCL8
+	CALL	PERFORM,V?PUT-ON,MANACLES,PRSI
+	RTRUE	
+?CCL8:	CALL	OPEN-CLOSE,PRSO,FALSE-VALUE,STR?327
+	RSTACK	
+?CCL5:	EQUAL?	PRSA,V?OPEN \?CCL10
+	FSET?	MANACLES,OPENBIT \?CCL13
+	PRINTR	"They are already open!"
+?CCL13:	EQUAL?	PRSI,JEWEL \?CCL15
+	CALL	PROPOSE
+	RSTACK	
+?CCL15:	PRINTI	"It isn't that easy"
+	PRINT	PCR
+	RTRUE	
+?CCL10:	EQUAL?	PRSA,V?UNLOCK,V?PICK \?CCL17
+	EQUAL?	PRSI,JEWEL \?CCL17
+	PRINTI	"You twist the pin of"
+	CALL	TPRINT,JEWEL
+	PRINTI	" in the "
+	IN?	HERO,MANACLES \?CCL22
+	MOVE	HERO,HERE
+	INC	'SCORE
+	FSET	MANACLES,OPENBIT
+	PRINTI	"locks, quickly freeing Nicholas. "
+	FSET?	HERO,DEADBIT \?CCL25
+	PRINTI	"He falls in a faint at your feet"
+	PRINT	PCR
+	RTRUE	
+?CCL25:	CRLF	
+	CALL	NICK-RUNS-OFF
+	RSTACK	
+?CCL22:	FSET	MANACLES,OPENBIT
+	FCLEAR	MANACLES,LOCKEDBIT
+	PRINTI	"manacles until they pop open"
+	PRINT	PCR
+	RTRUE	
+?CCL17:	EQUAL?	PRSA,V?UNLOCK \?CCL27
+	PRINTI	"That key is much too large to fit in"
+	CALL	TRPRINT,MANACLES
+	RSTACK	
+?CCL27:	EQUAL?	PRSA,V?WEAR,V?REACH-IN \?CCL29
+	CALL	PERFORM,V?PUT-ON,MANACLES,ME
+	RTRUE	
+?CCL29:	EQUAL?	PRSA,V?PUT \?CCL31
+	EQUAL?	PRSO,ME \?CCL34
+	CALL	PERFORM,V?PUT-ON,MANACLES,ME
+	RTRUE	
+?CCL34:	EQUAL?	PRSO,LARGE-KEY \?CCL36
+	CALL	PERFORM,V?UNLOCK,MANACLES
+	RTRUE	
+?CCL36:	MOVE	PRSO,HERE
+	CALL	CTPRINT,PRSO
+	PRINTR	" drops to the floor."
+?CCL31:	EQUAL?	PRSA,V?WEAR,V?PUT-ON /?CCL38
+	EQUAL?	PRSA,V?TIE \FALSE
+	EQUAL?	P-PRSA-WORD,W?FASTEN,W?SECURE,W?ATTACH \FALSE
+?CCL38:	EQUAL?	PRSI,ME \?CCL45
+	PRINTI	"Mama would not have praised your intelligence"
+	PRINT	PCR
+	RTRUE	
+?CCL45:	EQUAL?	PRSI,DAD \?CCL47
+	SET	'AWAITING-REPLY,1
+	CALL	QUEUE,I-REPLY,2
+	PRINTR	"He wanders off before you can get them on him. ""Oh dear, you have learned atrocious manners these last few year in London!"""
+?CCL47:	EQUAL?	PRSI,HERO \?CCL49
+	PRINT	YOU-CANT
+	PRINTR	"lift him high enough."
+?CCL49:	PRINT	YOU-CANT
+	PRINTI	"put that in "
+	PRINTD	MANACLES
+	PRINTR	"!"
+
+
+	.FUNCT	DESC-MANACLES
+	IN?	HERO,MANACLES \?CCL3
+	PRINTI	"Nicholas is spread-eagled against the wall, shackled in the "
+	PRINTD	MANACLES
+	PRINTC	46
+	JUMP	?CND1
+?CCL3:	IN?	PROTAGONIST,MANACLES \?CCL5
+	PRINTI	"You lean against the wall, one arm raised above "
+	PRINTD	HEAD
+	PRINTI	", cuffed in a manacle."
+	JUMP	?CND1
+?CCL5:	PRINTI	"A "
+	PRINTD	MANACLES
+	PRINTI	" hangs from iron chains attached high on the wall."
+?CND1:	EQUAL?	PRSA,V?LOOK-INSIDE,V?EXAMINE \TRUE
+	CRLF	
+	RTRUE	
+
+
+	.FUNCT	GEN-WELL
+	EQUAL?	HERE,DUNGEON \FALSE
+	RETURN	TRAP
+
+
+	.FUNCT	TRAP-F
+	EQUAL?	PRSA,V?MOVE,V?RAISE,V?OPEN /?CTR2
+	EQUAL?	PRSA,V?LOWER,V?CLOSE \?CCL3
+?CTR2:	CALL	OPEN-CLOSE,TRAP,STR?328,FALSE-VALUE
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?LOOK-INSIDE,V?LOOK-UNDER \?CCL7
+	FSET?	TRAP,OPENBIT \?CCL10
+	IN?	CRULLEY,TRAP \?CCL13
+	PRINTD	CRULLEY
+	PRINTR	" is slowly climbing up the well."
+?CCL13:	PRINTI	"You smell salt water and mold, but you can see nothing"
+	PRINT	PCR
+	RTRUE	
+?CCL10:	PRINTI	"It"
+	PRINT	IS-CLOSED
+	PRINT	PCR
+	RTRUE	
+?CCL7:	EQUAL?	PRSA,V?STAND-ON,V?BOARD,V?ENTER \?CCL15
+	FSET?	TRAP,OPENBIT \?CCL18
+	PRINTI	"You start to climb down the well, but lose your footing on the slimy rock."
+	FSET?	CRULLEY,MUNGBIT \?CND16
+	PRINTI	" At least you take"
+	CALL	TPRINT,CRULLEY
+	PRINTI	" with you as you fall."
+	JUMP	?CND16
+?CCL18:	PRINTI	"As you stand on"
+	CALL	TPRINT,TRAP
+	PRINTI	", the rotted wood tears away."
+?CND16:	CALL	JIGS-UP,FALL-TO-BOTTOM
+	RSTACK	
+?CCL15:	EQUAL?	PRSA,V?PUT-ON \?CCL22
+	FSET?	TRAP,OPENBIT \?CCL22
+	CALL	PERFORM,V?THROW,PRSO,TRAP
+	RTRUE	
+?CCL22:	EQUAL?	PRSA,V?PUT-THROUGH,V?PUT,V?THROW /?CCL26
+	EQUAL?	PRSA,V?THROW-AT \FALSE
+?CCL26:	EQUAL?	PRSO,RAPIER \?CCL31
+	PRINTD	HERO
+	PRINTR	" would not thank you for doing that."
+?CCL31:	EQUAL?	PRSO,RETICULE /FALSE
+	FSET?	CRULLEY,MUNGBIT \?CCL35
+	CALL	PERFORM,V?THROW,PRSO,CRULLEY
+	RTRUE	
+?CCL35:	REMOVE	PRSO
+	PRINTI	"You drop"
+	CALL	TPRINT-PRSO
+	PRINTI	" into the well. Several seconds later you hear a tiny splash"
+	PRINT	PCR
+	RTRUE	
+
+
+	.FUNCT	CELL-4-F,RARG
+	EQUAL?	RARG,M-END \?CCL3
+	FSET?	DAD,TOUCHBIT /?CCL3
+	FSET	DAD,TOUCHBIT
+	FCLEAR	DAD,NDESCBIT
+	INC	'SCORE
+	EQUAL?	DANCED-WITH,LAFOND \?CND6
+	CALL	QUEUE,I-SUMMONS,15
+?CND6:	CALL	QUEUE,I-DAD,2
+	PRINT	INDENT
+	PRINTI	"As you enter, a tall bony man moves out of the darkness. ""Papa,"" you cry, rushing into his arms.
+   ""Why, hullo, my dear."" He hugs you tightly. ""Nick certainly took his time about fetching you."
+	ZERO?	BOY-DRESS? \?CCL9
+	FSET?	CHEMISE,EVERYBIT /?CND8
+?CCL9:	PRINTI	""" He squints in horror at your clothes. ""I have always found the London fashions quite abominable."
+	FSET?	CHEMISE,EVERYBIT /?CND8
+	SET	'AWAITING-REPLY,2
+	CALL	QUEUE,I-REPLY,2
+	PRINTI	" Aren't you a trifle cold?"
+?CND8:	PRINTR	""""
+?CCL3:	ZERO?	RARG \FALSE
+	RFALSE	
+
+
+	.FUNCT	CELL-OBJ-F
+	EQUAL?	PRSA,V?BOARD,V?ENTER \?CCL3
+	EQUAL?	HERE,CELL-1,CELL-2,CELL-4 \?CCL6
+	PRINT	LOOK-AROUND
+	RTRUE	
+?CCL6:	EQUAL?	HERE,PASSAGE-1,PASSAGE-2 \?CCL8
+	CALL	DO-WALK,P?EAST
+	RSTACK	
+?CCL8:	EQUAL?	HERE,PASSAGE-4 \FALSE
+	CALL	DO-WALK,P?NORTH
+	RSTACK	
+?CCL3:	EQUAL?	PRSA,V?EXAMINE,V?LOOK \FALSE
+	EQUAL?	HERE,CELL-1,CELL-2,CELL-4 \?CCL15
+	CALL	V-LOOK
+	RSTACK	
+?CCL15:	PRINTI	"You would do better to enter it"
+	PRINT	PCR
+	RTRUE	
+
+	.ENDI
