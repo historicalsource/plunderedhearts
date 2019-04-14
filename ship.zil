@@ -1992,7 +1992,9 @@ over-eager sailors," T  ,RUM-BARREL " is nearly full." CR>)>)
 		<SET LIQUID ,RUM>)
 	       (<OR <PRSI? ,SEA ,WATER ,WATER-BARREL ,POOL>
 		    <EQUAL? ,HERE ,BY-SHIP ,LAGOON ,SHALLOWS ,BEACH>>
-		<SET LIQUID ,WATER>)>
+		<SET LIQUID ,WATER>)
+	       (T
+		<IMPOSSIBLES>)>
 	 <COND (<OR <AND ,WET-DRESS
 			 <PRSO? ,DRESS>>
 		    <AND ,WET-RAG
